@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/*
+ * ─── Design Tokens (Tailwind v4 CSS-first config) ──────────────────────────
+ * All custom theme values are defined here using @theme.
+ * Reference: https://tailwindcss.com/docs/theme
+ */
+
+@theme {
+  --color-primary-50: oklch(0.97 0.015 256.37);
+  --color-primary-100: oklch(0.93 0.034 256.5);
+  --color-primary-200: oklch(0.87 0.062 256.57);
+  --color-primary-300: oklch(0.79 0.103 257.07);
+  --color-primary-400: oklch(0.7 0.141 257.6);
+  --color-primary-500: oklch(0.6 0.177 258.46);
+  --color-primary-600: oklch(0.5 0.179 260.67);
+  --color-primary-700: oklch(0.42 0.165 261.22);
+  --color-primary-800: oklch(0.35 0.142 261.27);
+  --color-primary-900: oklch(0.29 0.117 261.5);
+  --color-primary-950: oklch(0.18 0.076 261.9);
+
+  --color-neutral-50: oklch(0.98 0.002 247.83);
+  --color-neutral-100: oklch(0.96 0.003 264.53);
+  --color-neutral-200: oklch(0.92 0.004 286.32);
+  --color-neutral-300: oklch(0.87 0.006 286.29);
+  --color-neutral-400: oklch(0.75 0.008 285.87);
+  --color-neutral-500: oklch(0.62 0.009 285.82);
+  --color-neutral-600: oklch(0.48 0.008 285.83);
+  --color-neutral-700: oklch(0.38 0.008 285.83);
+  --color-neutral-800: oklch(0.28 0.007 285.81);
+  --color-neutral-900: oklch(0.19 0.006 285.73);
+  --color-neutral-950: oklch(0.13 0.005 285.62);
+}
+
+
+/*
+ * ─── Base / Reset ───────────────────────────────────────────────────────────
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus-visible ring for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-500;
+  }
+}
