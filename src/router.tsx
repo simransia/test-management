@@ -1,5 +1,8 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { RootLayout } from "@/components/layout";
+import { AuthLayout } from "@/components/layout/auth-layout";
+import { GuestRoute } from "@/components/auth/guest-route";
+import { ProtectedRoute } from "@/components/auth/protected-route";
 
 /**
  * Application router configuration.
@@ -7,31 +10,49 @@ import { RootLayout } from "@/components/layout";
  */
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <RootLayout />,
+    element: <AuthLayout />,
     children: [
       {
-        index: true,
-        lazy: async () => {
-          const module = await import("@/pages/dashboard");
-          return { Component: module.default };
-        },
-      },
-      {
-        path: "login",
-        lazy: async () => {
-          const module = await import("@/pages/login");
-          return { Component: module.default };
-        },
-      },
-      {
-        path: "*",
-        lazy: async () => {
-          const module = await import("@/pages/not-found");
-          return { Component: module.default };
-        },
+        element: <GuestRoute />,
+        children: [
+          {
+            path: "login",
+            lazy: async () => {
+              const module = await import("@/pages/login");
+              return { Component: module.default };
+            },
+          },
+        ],
       },
     ],
   },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <RootLayout />,
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const module = await import("@/pages/dashboard");
+              return { Component: module.default };
+            },
+          },
+          {
+            path: "*",
+            lazy: async () => {
+              const module = await import("@/pages/not-found");
+              return { Component: module.default };
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/login" replace />,
+  },
 ]);
-
