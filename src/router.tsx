@@ -41,6 +41,34 @@ export const router = createBrowserRouter([
             },
           },
           {
+            path: "tests/create",
+            lazy: async () => {
+              const module = await import("@/pages/tests/create");
+              return { Component: module.default };
+            },
+          },
+          {
+            path: "tests/edit/:testId",
+            lazy: async () => {
+              const module = await import("@/pages/tests/edit");
+              return { Component: module.default };
+            },
+          },
+          {
+            path: "tests/:testId/questions",
+            lazy: async () => {
+              const module = await import("@/pages/tests/questions");
+              return { Component: module.default };
+            },
+          },
+          {
+            path: "tests/:testId/publish",
+            lazy: async () => {
+              const module = await import("@/pages/tests/publish");
+              return { Component: module.default };
+            },
+          },
+          {
             path: "*",
             lazy: async () => {
               const module = await import("@/pages/not-found");
