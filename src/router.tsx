@@ -48,13 +48,6 @@ export const router = createBrowserRouter([
             },
           },
           {
-            path: "tests/edit/:testId",
-            lazy: async () => {
-              const module = await import("@/pages/tests/edit");
-              return { Component: module.default };
-            },
-          },
-          {
             path: "tests/:testId/questions",
             lazy: async () => {
               const module = await import("@/pages/tests/questions");

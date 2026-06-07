@@ -63,10 +63,11 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
           </div>
           <span
             className={cn(
-              "inline-flex h-6 items-center rounded-lg px-2.5 text-sm text-[#fefeff]",
+              "inline-flex h-6 items-center gap-1.5 rounded-lg px-2.5 text-sm text-[#fefeff]",
               getDifficultyStyles(test.difficulty),
             )}
           >
+            <img src="/icons/cognition.png" alt="Difficulty" className="h-3.5 w-3.5 object-contain" />
             {formatDifficulty(test.difficulty)}
           </span>
           <span
@@ -116,31 +117,31 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
         <div className="flex items-center gap-3">
           <Link
             to={`/tests/view/${test.id}`}
-            className="flex size-8 items-center justify-center rounded-lg text-[#6b7180] transition-colors hover:bg-[#f8faff] hover:text-[#384ec7]"
+            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
             title="View test"
           >
-            <Eye className="size-5" strokeWidth={1.75} />
+            <img src="/icons/eye.png" alt="View" className="size-5 object-contain" />
           </Link>
           <Link
             to={`/tests/edit/${test.id}`}
-            className="flex size-8 items-center justify-center rounded-lg text-[#6b7180] transition-colors hover:bg-[#f8faff] hover:text-[#384ec7]"
+            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
             title="Edit test"
           >
-            <Pencil className="size-5" strokeWidth={1.75} />
+            <img src="/icons/edit.png" alt="Edit" className="size-5 object-contain" />
           </Link>
           <button
             type="button"
             onClick={() => onDelete(test)}
-            className="flex size-8 items-center justify-center rounded-lg text-[#6b7180] transition-colors hover:bg-red-50 hover:text-red-600"
+            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-50"
             title="Delete test"
           >
-            <Trash2 className="size-5" strokeWidth={1.75} />
+            <img src="/icons/trash.png" alt="Delete" className="size-5 object-contain" />
           </button>
         </div>
 
         <div className="flex h-8 items-center gap-[5px] rounded-lg border border-[#e5e7eb] px-[5px]">
           <div className="flex h-full w-20 items-center gap-1.5 px-1">
-            <Clock className="size-4 text-[#6b7180]" strokeWidth={1.75} />
+            <img src="/icons/clock.png" alt="Time" className="size-4 object-contain" />
             <span className="whitespace-nowrap text-sm text-[#374151]">
               {test.total_time} Min
             </span>

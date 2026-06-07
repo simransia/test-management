@@ -1,10 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import {
-  TrendingUp,
-  Edit3,
-  ClipboardList,
   LogOut,
-  Bell,
   ChevronDown,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
@@ -23,23 +19,77 @@ export function RootLayout() {
     {
       name: "Dashboard",
       path: "/",
-      icon: TrendingUp,
+      icon: "/icons/sidebar-icons/dash icon def.png",
       match: activePath === "/" || activePath === "/dashboard",
     },
     {
       name: "Test Creation",
       path: "/tests/create",
-      icon: Edit3,
+      icon: "/icons/sidebar-icons/create test deaf.png",
       match:
         activePath.startsWith("/tests/create") ||
         activePath.startsWith("/tests/edit") ||
-        activePath.startsWith("/tests/") && (activePath.includes("/questions") || activePath.includes("/publish")),
+        (activePath.startsWith("/tests/") && (activePath.includes("/questions") || activePath.includes("/publish"))),
     },
     {
-      name: "Test Tracking",
-      path: "/tests/track",
-      icon: ClipboardList,
-      match: activePath.startsWith("/tests/track"),
+      name: "Admin Management",
+      path: "#",
+      icon: "/icons/sidebar-icons/admin management def.png",
+      disabled: true,
+    },
+    {
+      name: "Resources",
+      path: "#",
+      icon: "/icons/sidebar-icons/resources def.png",
+      disabled: true,
+    },
+    {
+      name: "User Management",
+      path: "#",
+      icon: "/icons/sidebar-icons/Usermanagement def.png",
+      disabled: true,
+    },
+    {
+      name: "Approval",
+      path: "#",
+      icon: "/icons/sidebar-icons/approval def.png",
+      disabled: true,
+    },
+    {
+      name: "Role",
+      path: "#",
+      icon: "/icons/sidebar-icons/role def.png",
+      disabled: true,
+    },
+    {
+      name: "Badges",
+      path: "#",
+      icon: "/icons/sidebar-icons/badges def.png",
+      disabled: true,
+    },
+    {
+      name: "Payments",
+      path: "#",
+      icon: "/icons/sidebar-icons/payments def.png",
+      disabled: true,
+    },
+    {
+      name: "Customer Support",
+      path: "#",
+      icon: "/icons/sidebar-icons/customer support def.png",
+      disabled: true,
+    },
+    {
+      name: "Notification",
+      path: "#",
+      icon: "/icons/sidebar-icons/notification def.png",
+      disabled: true,
+    },
+    {
+      name: "Settings",
+      path: "#",
+      icon: "/icons/sidebar-icons/settings def.png",
+      disabled: true,
     },
   ];
 
@@ -136,7 +186,7 @@ export function RootLayout() {
             return (
               <Link
                 key={item.name}
-                to={item.path}
+                to={item.disabled ? "#" : item.path}
                 className={cn(
                   "group relative flex items-center gap-3 text-sm font-bold transition-all overflow-hidden",
                   sidebarCollapsed
@@ -145,18 +195,20 @@ export function RootLayout() {
                   item.match
                     ? "bg-[#f4f8ff] text-[#1b5def]"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
+                  item.disabled && "pointer-events-none opacity-50 cursor-not-allowed"
                 )}
+                onClick={(e) => item.disabled && e.preventDefault()}
               >
                 {/* Active left border indicator */}
                 {item.match && (
                   <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#1b5def]" />
                 )}
-                <Icon
+                <img
+                  src={item.icon}
+                  alt={item.name}
                   className={cn(
-                    "h-5 w-5 shrink-0",
-                    item.match
-                      ? "text-[#1b5def]"
-                      : "text-slate-400 group-hover:text-slate-600",
+                    "h-5 w-5 shrink-0 object-contain",
+                    item.match ? "" : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
                   )}
                 />
                 {!sidebarCollapsed && <span>{item.name}</span>}
@@ -192,15 +244,15 @@ export function RootLayout() {
           {/* Right: Bell + Profile */}
           <div className="flex items-center gap-5">
             <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50">
-              <Bell className="h-5 w-5 text-slate-500" />
+              <img src="/icons/bell.png" className="h-5 w-5 object-contain" alt="Notifications" />
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-green-500 ring-2 ring-white" />
             </button>
 
             <div className="flex items-center gap-3 border-l border-slate-200 pl-5">
               <img
-                src="https://api.dicebear.com/7.x/adventurer/svg?seed=Alex"
+                src="/icons/profile.png"
                 alt="Avatar"
-                className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100"
+                className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
               />
               <div className="flex flex-col truncate">
                 <span className="text-sm font-bold text-slate-800">
@@ -210,7 +262,7 @@ export function RootLayout() {
                   {role}
                 </span>
               </div>
-              <ChevronDown className="h-4 w-4 text-slate-400" />
+              <img src="/icons/chevron-down.png" className="h-4 w-4 object-contain" alt="Dropdown" />
             </div>
           </div>
         </header>

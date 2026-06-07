@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import { useTestStore, type LocalQuestion } from "@/stores/test-store";
 import {
   fetchTestById,
@@ -15,14 +17,13 @@ import type { Subject, Topic, SubTopic } from "@/types/test";
 import {
   Loader2,
   AlertCircle,
-  Plus,
-  Trash2,
   ChevronDown,
   ChevronLeft,
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatTestType, formatDifficulty, getDifficultyStyles } from "@/lib/test-utils";
+import { EditTestModal } from "@/components/tests/edit-test-modal";
 
 export default function QuestionsPage() {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ export default function QuestionsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [questionPanelCollapsed, setQuestionPanelCollapsed] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Dropdown data for question settings
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -204,25 +206,25 @@ export default function QuestionsPage() {
       <div
         className={cn(
           "flex flex-col border-r border-slate-200 bg-white transition-all shrink-0",
-          questionPanelCollapsed ? "w-0 overflow-hidden" : "w-[220px]",
+          questionPanelCollapsed ? "w-0 overflow-hidden" : "w-[260px]",
         )}
       >
-        <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
-          <span className="text-sm font-semibold text-slate-700">Question creation</span>
+        <div className="flex items-center justify-between px-6 py-5">
+          <span className="text-lg font-semibold text-slate-600">Question creation</span>
           <button
             type="button"
             onClick={() => setQuestionPanelCollapsed(true)}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-[#1b5def] hover:opacity-80"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <img src="/icons/blue-double-arrow-left.png" alt="Collapse" className="h-4 w-4 object-contain" />
           </button>
         </div>
 
-        <div className="px-4 py-3 text-xs text-slate-500">
-          Total Questions : {localQuestions.length}
+        <div className="px-6 py-2 pb-6 text-base font-medium text-slate-500">
+          Total Questions . {localQuestions.length}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2 space-y-1">
+        <div className="flex-1 overflow-y-auto px-6 space-y-3 pb-6">
           {localQuestions.map((q, idx) => {
             const filled = isQuestionFilled(q);
             return (
@@ -231,33 +233,44 @@ export default function QuestionsPage() {
                 type="button"
                 onClick={() => setActiveQuestionIndex(idx)}
                 className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                  idx === activeQuestionIndex
-                    ? "bg-[#f4f8ff] text-[#1b5def]"
-                    : "text-slate-500 hover:bg-slate-50",
+                  "w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all shadow-sm",
+                  filled
+                    ? "border-green-500 bg-white text-green-600 font-medium"
+                    : "border-slate-200 bg-white text-slate-300 font-medium",
                 )}
               >
-                <span
-                  className={cn(
-                    "flex items-center justify-center h-5 w-5 rounded-full text-[10px] text-white",
-                    filled ? "bg-green-500" : "bg-amber-400",
-                  )}
-                >
-                  {filled ? <Check className="h-3 w-3" /> : idx + 1}
-                </span>
-                <span>Question {idx + 1}</span>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={cn(
+                      "flex items-center justify-center h-5 w-5 rounded-full text-white",
+                      filled ? "bg-green-500" : "bg-slate-200",
+                    )}
+                  >
+                    {filled ? (
+                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                    ) : (
+                      <span className="h-1 w-2.5 bg-white rounded-full block" />
+                    )}
+                  </span>
+                  <span>Question {idx + 1}</span>
+                </div>
+                {filled ? (
+                  <img src="/icons/green-double-arrow.png" alt="Next" className="h-3.5 w-auto object-contain" />
+                ) : (
+                  <span className="text-slate-300 font-bold tracking-tighter leading-none text-lg select-none">»</span>
+                )}
               </button>
             );
           })}
         </div>
 
-        <div className="p-3 border-t border-slate-100">
+        <div className="p-4 border-t border-slate-100 mt-auto">
           <button
             type="button"
             onClick={addLocalQuestion}
-            className="flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-slate-300 py-2 text-xs font-medium text-slate-500 hover:border-[#1b5def] hover:text-[#1b5def]"
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-[#1b5def] py-2.5 text-sm font-semibold text-[#1b5def] hover:bg-[#f4f8ff]"
           >
-            <Plus className="h-3.5 w-3.5" />
+            <img src="/icons/plus.png" className="h-4 w-4 object-contain" alt="Add" />
             Add Question
           </button>
         </div>
@@ -296,12 +309,10 @@ export default function QuestionsPage() {
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => navigate(`/tests/edit/${testId}`)}
-                    className="text-[#1b5def] hover:text-blue-700 p-1"
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="p-1.5 rounded-md hover:bg-slate-100 transition-colors"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                    </svg>
+                    <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
                   </button>
                   <button
                     type="button"
@@ -321,10 +332,11 @@ export default function QuestionsPage() {
                 </span>
                 <span
                   className={cn(
-                    "inline-flex h-6 items-center rounded-lg px-2.5 text-xs font-semibold text-white",
+                    "inline-flex h-6 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-white",
                     getDifficultyStyles(testData.difficulty),
                   )}
                 >
+                  <img src="/icons/cognition.png" alt="Difficulty" className="h-3.5 w-3.5 object-contain" />
                   {formatDifficulty(testData.difficulty)}
                 </span>
               </div>
@@ -377,10 +389,10 @@ export default function QuestionsPage() {
                 </h3>
                 <div className="flex items-center gap-3 text-xs font-semibold">
                   <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
-                    <span className="text-slate-400">+</span> MCQ
+                    <img src="/icons/plus.png" className="h-3 w-3 object-contain opacity-50" alt="Add" /> MCQ
                   </button>
                   <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
-                    <span className="text-slate-400">+</span> CSV
+                    <img src="/icons/download.png" className="h-3.5 w-3.5 object-contain opacity-50" alt="Import" /> CSV
                   </button>
                 </div>
               </div>
@@ -390,30 +402,28 @@ export default function QuestionsPage() {
                 <button
                   type="button"
                   onClick={() => removeLocalQuestion(currentQuestion.localId)}
-                  className="text-xs font-semibold text-[#ff6b6b] hover:text-red-600 mb-4 flex items-center gap-1"
+                  className="text-xs font-semibold text-[#ff6b6b] hover:text-red-600 mb-4 flex items-center gap-1.5"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <img src="/icons/trash-grey.png" alt="Delete All Edits" className="h-3.5 w-3.5 object-contain" />
                   Delete All Edits
                 </button>
               )}
 
               {/* Question text */}
               <div className="mb-6 relative">
-                <textarea
+                <ReactQuill
+                  theme="snow"
                   value={currentQuestion.question}
-                  onChange={(e) =>
-                    updateCurrent({ question: e.target.value })
-                  }
+                  onChange={(val) => updateCurrent({ question: val })}
+                  className="bg-white rounded-lg mb-8 [&_.ql-toolbar]:rounded-t-lg [&_.ql-container]:rounded-b-lg [&_.ql-container]:min-h-[120px]"
                   placeholder="Type here"
-                  rows={5}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def] resize-none"
                 />
                 <button
                   type="button"
                   onClick={() => updateCurrent({ question: "" })}
-                  className="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors"
+                  className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
                 </button>
               </div>
 
@@ -450,9 +460,9 @@ export default function QuestionsPage() {
                           <button
                             type="button"
                             onClick={() => updateCurrent({ [key]: "" })}
-                            className="absolute right-3 text-slate-300 hover:text-red-500 transition-colors"
+                            className="absolute right-3 opacity-50 hover:opacity-100 transition-opacity"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
                           </button>
                         </div>
                       </label>
@@ -467,21 +477,19 @@ export default function QuestionsPage() {
                   Add Solution
                 </h4>
                 <div className="relative">
-                  <textarea
+                  <ReactQuill
+                    theme="snow"
                     value={currentQuestion.explanation}
-                    onChange={(e) =>
-                      updateCurrent({ explanation: e.target.value })
-                    }
+                    onChange={(val) => updateCurrent({ explanation: val })}
+                    className="bg-white rounded-lg mb-8 [&_.ql-toolbar]:rounded-t-lg [&_.ql-container]:rounded-b-lg [&_.ql-container]:min-h-[100px]"
                     placeholder="Type here"
-                    rows={4}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def] resize-none"
                   />
                   <button
                     type="button"
                     onClick={() => updateCurrent({ explanation: "" })}
-                    className="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors"
+                    className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
                   </button>
                 </div>
               </div>
@@ -607,6 +615,22 @@ export default function QuestionsPage() {
           </button>
         </div>
       </div>
+
+      {/* Edit Test Modal */}
+      {isEditModalOpen && testId && (
+        <EditTestModal
+          testId={testId}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={() => {
+            fetchTestById(testId).then((res) => {
+              if (res.status === "success" && res.data) {
+                setTestData(res.data);
+              }
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
