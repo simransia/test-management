@@ -16,8 +16,11 @@ import {
   ChevronDown,
   Check,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { formatTestType, formatDifficulty, getDifficultyStyles } from "@/lib/test-utils";
 import { EditTestModal } from "@/components/tests/edit-test-modal";
+import { fetchSubjects, fetchTopicsBySubject } from "@/api/test";
+import type { Subject, Topic } from "@/types/test";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -44,6 +47,8 @@ export default function PublishPage() {
   const [questionPanelCollapsed, setQuestionPanelCollapsed] = useState(false);
   const [questions, setQuestions] = useState<Question[]>(savedQuestions);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     setSidebarCollapsed(true);
@@ -69,6 +74,12 @@ export default function PublishPage() {
             }
           }
         }
+        
+        // Load subjects for resolution
+        const sRes = await fetchSubjects();
+        if (sRes.status === "success" && sRes.data) {
+          setSubjects(sRes.data);
+        }
       } catch (err) {
         setError(getApiErrorMessage(err));
       } finally {
@@ -77,6 +88,29 @@ export default function PublishPage() {
     }
     load();
   }, [testId, navigate, setTestData, setTestId, setStep, setSidebarCollapsed, setSavedQuestions]);
+
+  // Load topics when testData subject is available
+  useEffect(() => {
+    if (!testData?.subject) return;
+    const subjectObj = subjects.find(
+      (s) => s.name === testData.subject || s.id === testData.subject,
+    );
+    if (subjectObj) {
+      fetchTopicsBySubject(subjectObj.id)
+        .then((res) => setTopics(res.data ?? []))
+        .catch(() => {});
+    }
+  }, [testData?.subject, subjects]);
+
+  const getSubjectName = (id: string) => {
+    const s = subjects.find((s) => s.id === id || s.name === id);
+    return s ? s.name : id;
+  };
+
+  const getTopicName = (id: string) => {
+    const t = topics.find((t) => t.id === id || t.name === id);
+    return t ? t.name : id;
+  };
 
   const handlePublish = async () => {
     if (!testId) return;
@@ -186,17 +220,17 @@ export default function PublishPage() {
               <div className="grid grid-cols-[80px_1fr] gap-y-1.5 text-xs text-slate-500 max-w-md mb-3">
                 <span>Subject</span>
                 <span className="text-slate-700 font-medium">
-                  : {testData.subject}
+                  : {getSubjectName(testData.subject)}
                 </span>
                 <span>Topics</span>
-                <span className="flex items-center gap-1">
+                <span className="flex flex-wrap items-center gap-1">
                   :{" "}
                   {testData.topics?.map((t) => (
                     <span
                       key={t}
                       className="inline-flex items-center rounded-md border border-amber-300 px-1.5 py-0.5 text-[10px] text-amber-500"
                     >
-                      {t}
+                      {getTopicName(t)}
                     </span>
                   ))}
                 </span>

@@ -248,21 +248,23 @@ export function RootLayout() {
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-green-500 ring-2 ring-white" />
             </button>
 
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-5">
-              <img
-                src="/icons/profile.png"
-                alt="Avatar"
-                className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
-              />
+            <div className="flex items-center gap-3 border-l border-slate-200 pl-5 cursor-pointer">
+              <div className="relative">
+                <img
+                  src="/icons/profile.png"
+                  alt="Avatar"
+                  className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
+                />
+              </div>
               <div className="flex flex-col truncate">
-                <span className="text-sm font-bold text-slate-800">
+                <span className="text-[15px] font-bold text-[#002a5c]">
                   {displayName}
                 </span>
-                <span className="text-[10px] font-semibold uppercase text-slate-400">
+                <span className="text-[11px] font-semibold uppercase text-[#8897a8] tracking-wider">
                   {role}
                 </span>
               </div>
-              <img src="/icons/chevron-down.png" className="h-4 w-4 object-contain" alt="Dropdown" />
+              <img src="/icons/chevron-down.png" className="h-4 w-4 object-contain ml-2 opacity-60" alt="Dropdown" />
             </div>
           </div>
         </header>

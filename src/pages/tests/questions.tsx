@@ -2,7 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { useTestStore, type LocalQuestion } from "@/stores/test-store";
+import {
+  useTestStore,
+  type LocalQuestion,
+  createEmptyQuestion,
+} from "@/stores/test-store";
 import {
   fetchTestById,
   fetchBulkQuestions,
@@ -22,7 +26,11 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatTestType, formatDifficulty, getDifficultyStyles } from "@/lib/test-utils";
+import {
+  formatTestType,
+  formatDifficulty,
+  getDifficultyStyles,
+} from "@/lib/test-utils";
 import { EditTestModal } from "@/components/tests/edit-test-modal";
 
 export default function QuestionsPage() {
@@ -43,6 +51,7 @@ export default function QuestionsPage() {
     updateLocalQuestion,
     removeLocalQuestion,
     setSavedQuestions,
+    setLocalQuestions,
   } = useTestStore();
 
   const testId = paramTestId || storeTestId;
@@ -74,7 +83,6 @@ export default function QuestionsPage() {
           if (res.status === "success" && res.data) {
             setTestData(res.data);
             setTestId(res.data.id);
-            // If test has questions, load them
             if (res.data.questions && res.data.questions.length > 0) {
               const qRes = await fetchBulkQuestions(res.data.questions);
               if (qRes.status === "success" && qRes.data) {
@@ -93,7 +101,29 @@ export default function QuestionsPage() {
       }
     }
     load();
-  }, [testId, testData, navigate, setTestData, setTestId, setStep, setSidebarCollapsed, setSavedQuestions]);
+  }, [
+    testId,
+    testData,
+    navigate,
+    setTestData,
+    setTestId,
+    setStep,
+    setSidebarCollapsed,
+    setSavedQuestions,
+  ]);
+
+  // Initialize empty questions if testData is loaded and local questions are in initial state
+  useEffect(() => {
+    if (testData && testData.total_questions > 1) {
+      if (localQuestions.length === 1 && localQuestions[0].question === "") {
+        const initialQs = [];
+        for (let i = 0; i < testData.total_questions; i++) {
+          initialQs.push(createEmptyQuestion());
+        }
+        setLocalQuestions(initialQs);
+      }
+    }
+  }, [testData, localQuestions, setLocalQuestions]);
 
   // Load topics when testData subject is available
   useEffect(() => {
@@ -117,6 +147,16 @@ export default function QuestionsPage() {
       .then((res) => setSubTopics(res.data ?? []))
       .catch(() => {});
   }, [topics]);
+
+  const getSubjectName = (id: string) => {
+    const s = subjects.find((s) => s.id === id || s.name === id);
+    return s ? s.name : id;
+  };
+
+  const getTopicName = (id: string) => {
+    const t = topics.find((t) => t.id === id || t.name === id);
+    return t ? t.name : id;
+  };
 
   const currentQuestion: LocalQuestion | undefined =
     localQuestions[activeQuestionIndex];
@@ -210,13 +250,19 @@ export default function QuestionsPage() {
         )}
       >
         <div className="flex items-center justify-between px-6 py-5">
-          <span className="text-lg font-semibold text-slate-600">Question creation</span>
+          <span className="text-lg font-semibold text-slate-600">
+            Question creation
+          </span>
           <button
             type="button"
             onClick={() => setQuestionPanelCollapsed(true)}
             className="text-[#1b5def] hover:opacity-80"
           >
-            <img src="/icons/blue-double-arrow-left.png" alt="Collapse" className="h-4 w-4 object-contain" />
+            <img
+              src="/icons/blue-double-arrow-left.png"
+              alt="Collapse"
+              className="h-4 w-4 object-contain"
+            />
           </button>
         </div>
 
@@ -224,7 +270,7 @@ export default function QuestionsPage() {
           Total Questions . {localQuestions.length}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 space-y-3 pb-6">
+        <div className="flex-1 overflow-y-auto px-6 space-y-3 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {localQuestions.map((q, idx) => {
             const filled = isQuestionFilled(q);
             return (
@@ -233,31 +279,38 @@ export default function QuestionsPage() {
                 type="button"
                 onClick={() => setActiveQuestionIndex(idx)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all shadow-sm",
+                  "w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-sm transition-all shadow-sm",
                   filled
                     ? "border-green-500 bg-white text-green-600 font-medium"
-                    : "border-slate-200 bg-white text-slate-300 font-medium",
+                    : "border-slate-200 bg-white text-slate-400 font-medium",
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <span
-                    className={cn(
-                      "flex items-center justify-center h-5 w-5 rounded-full text-white",
-                      filled ? "bg-green-500" : "bg-slate-200",
-                    )}
-                  >
-                    {filled ? (
+                  {filled ? (
+                    <span className="flex items-center justify-center h-5 w-5 rounded-full text-white bg-green-500">
                       <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                    ) : (
-                      <span className="h-1 w-2.5 bg-white rounded-full block" />
-                    )}
-                  </span>
+                    </span>
+                  ) : (
+                    <img
+                      src="/icons/muted-check.png"
+                      alt="Incomplete"
+                      className="h-5 w-5 object-contain"
+                    />
+                  )}
                   <span>Question {idx + 1}</span>
                 </div>
                 {filled ? (
-                  <img src="/icons/green-double-arrow.png" alt="Next" className="h-3.5 w-auto object-contain" />
+                  <img
+                    src="/icons/green-double-arrow.png"
+                    alt="Next"
+                    className="h-3 w-auto object-contain"
+                  />
                 ) : (
-                  <span className="text-slate-300 font-bold tracking-tighter leading-none text-lg select-none">»</span>
+                  <img
+                    src="/icons/grey-double-arrow.png"
+                    alt="Next"
+                    className="h-3 w-auto object-contain"
+                  />
                 )}
               </button>
             );
@@ -270,7 +323,11 @@ export default function QuestionsPage() {
             onClick={addLocalQuestion}
             className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-[#1b5def] py-2.5 text-sm font-semibold text-[#1b5def] hover:bg-[#f4f8ff]"
           >
-            <img src="/icons/plus.png" className="h-4 w-4 object-contain" alt="Add" />
+            <img
+              src="/icons/plus.png"
+              className="h-4 w-4 object-contain"
+              alt="Add"
+            />
             Add Question
           </button>
         </div>
@@ -288,7 +345,7 @@ export default function QuestionsPage() {
       )}
 
       {/* ── Main Content ── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-white">
         <div className="flex-1 overflow-y-auto">
           {/* Test summary banner */}
           {testData && (
@@ -312,7 +369,11 @@ export default function QuestionsPage() {
                     onClick={() => setIsEditModalOpen(true)}
                     className="p-1.5 rounded-md hover:bg-slate-100 transition-colors"
                   >
-                    <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
+                    <img
+                      src="/icons/edit.png"
+                      alt="Edit"
+                      className="h-4 w-4 object-contain"
+                    />
                   </button>
                   <button
                     type="button"
@@ -326,46 +387,79 @@ export default function QuestionsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-base font-bold text-slate-800">
-                  Chapter 1
-                </span>
-                <span
-                  className={cn(
-                    "inline-flex h-6 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-white",
-                    getDifficultyStyles(testData.difficulty),
-                  )}
-                >
-                  <img src="/icons/cognition.png" alt="Difficulty" className="h-3.5 w-3.5 object-contain" />
-                  {formatDifficulty(testData.difficulty)}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-[80px_1fr] gap-y-1.5 text-xs text-slate-500 max-w-md">
-                <span>Subject</span>
-                <span className="text-slate-700 font-medium">
-                  : {testData.subject}
-                </span>
-                <span>Topics</span>
-                <span className="flex items-center gap-1">
-                  :{" "}
-                  {testData.topics?.map((t) => (
-                    <span
-                      key={t}
-                      className="inline-flex items-center rounded-md border border-amber-300 px-1.5 py-0.5 text-[10px] text-amber-500"
-                    >
-                      {t}
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-base font-bold text-slate-800">
+                      Chapter 1
                     </span>
-                  ))}
-                </span>
-              </div>
+                    <span
+                      className={cn(
+                        "inline-flex h-6 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-white",
+                        getDifficultyStyles(testData.difficulty),
+                      )}
+                    >
+                      <img
+                        src="/icons/cognition.png"
+                        alt="Difficulty"
+                        className="h-3.5 w-3.5 object-contain"
+                      />
+                      {formatDifficulty(testData.difficulty)}
+                    </span>
+                  </div>
 
-              <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
-                <span>{testData.total_time} Min</span>
-                <span className="text-slate-300">|</span>
-                <span>{testData.total_questions} Q's</span>
-                <span className="text-slate-300">|</span>
-                <span>{testData.total_marks} Marks</span>
+                  <div className="grid grid-cols-[80px_1fr] gap-y-1.5 text-xs text-slate-500 max-w-md">
+                    <span>Subject</span>
+                    <span className="text-slate-700 font-medium">
+                      : {getSubjectName(testData.subject)}
+                    </span>
+                    <span>Topics</span>
+                    <span className="flex flex-wrap items-center gap-1">
+                      :{" "}
+                      {testData.topics?.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center rounded-md border border-amber-300 px-1.5 py-0.5 text-[10px] text-amber-500"
+                        >
+                          {getTopicName(t)}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 mt-4 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg px-4 py-2 w-fit">
+                  <span className="flex items-center gap-2">
+                    <img
+                      src="/icons/timer.png"
+                      className="h-4 w-4 object-contain opacity-50"
+                      alt="Time"
+                    />{" "}
+                    {testData.total_time} Min
+                  </span>
+                  <span className="text-slate-200 text-lg font-light leading-none">
+                    |
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <img
+                      src="/icons/quiz.png"
+                      className="h-4 w-4 object-contain opacity-50"
+                      alt="Questions"
+                    />{" "}
+                    {testData.total_questions} Q's
+                  </span>
+                  <span className="text-slate-200 text-lg font-light leading-none">
+                    |
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <img
+                      src="/icons/marks.png"
+                      className="h-4 w-4 object-contain opacity-50"
+                      alt="Marks"
+                    />{" "}
+                    {testData.total_marks} Marks
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -388,11 +482,27 @@ export default function QuestionsPage() {
                   </span>
                 </h3>
                 <div className="flex items-center gap-3 text-xs font-semibold">
-                  <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
-                    <img src="/icons/plus.png" className="h-3 w-3 object-contain opacity-50" alt="Add" /> MCQ
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    <img
+                      src="/icons/plus.png"
+                      className="h-3 w-3 object-contain opacity-50"
+                      alt="Add"
+                    />{" "}
+                    MCQ
                   </button>
-                  <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
-                    <img src="/icons/download.png" className="h-3.5 w-3.5 object-contain opacity-50" alt="Import" /> CSV
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    <img
+                      src="/icons/download.png"
+                      className="h-3.5 w-3.5 object-contain opacity-50"
+                      alt="Import"
+                    />{" "}
+                    CSV
                   </button>
                 </div>
               </div>
@@ -404,7 +514,11 @@ export default function QuestionsPage() {
                   onClick={() => removeLocalQuestion(currentQuestion.localId)}
                   className="text-xs font-semibold text-[#ff6b6b] hover:text-red-600 mb-4 flex items-center gap-1.5"
                 >
-                  <img src="/icons/trash-grey.png" alt="Delete All Edits" className="h-3.5 w-3.5 object-contain" />
+                  <img
+                    src="/icons/trash-grey.png"
+                    alt="Delete All Edits"
+                    className="h-3.5 w-3.5 object-contain"
+                  />
                   Delete All Edits
                 </button>
               )}
@@ -423,7 +537,11 @@ export default function QuestionsPage() {
                   onClick={() => updateCurrent({ question: "" })}
                   className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity"
                 >
-                  <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
+                  <img
+                    src="/icons/trash-grey.png"
+                    alt="Clear"
+                    className="h-4 w-4 object-contain"
+                  />
                 </button>
               </div>
 
@@ -444,7 +562,9 @@ export default function QuestionsPage() {
                           name={`correct-${currentQuestion.localId}`}
                           value={key}
                           checked={currentQuestion.correct_option === key}
-                          onChange={() => updateCurrent({ correct_option: key })}
+                          onChange={() =>
+                            updateCurrent({ correct_option: key })
+                          }
                           className="h-4 w-4 accent-[#1b5def]"
                         />
                         <div className="flex-1 relative flex items-center">
@@ -462,7 +582,11 @@ export default function QuestionsPage() {
                             onClick={() => updateCurrent({ [key]: "" })}
                             className="absolute right-3 opacity-50 hover:opacity-100 transition-opacity"
                           >
-                            <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
+                            <img
+                              src="/icons/trash-grey.png"
+                              alt="Clear"
+                              className="h-4 w-4 object-contain"
+                            />
                           </button>
                         </div>
                       </label>
@@ -489,7 +613,11 @@ export default function QuestionsPage() {
                     onClick={() => updateCurrent({ explanation: "" })}
                     className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity"
                   >
-                    <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
+                    <img
+                      src="/icons/trash-grey.png"
+                      alt="Clear"
+                      className="h-4 w-4 object-contain"
+                    />
                   </button>
                 </div>
               </div>

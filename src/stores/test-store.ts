@@ -56,11 +56,11 @@ interface TestCreationState {
 }
 
 let nextId = 1;
-function makeLocalId() {
+export function makeLocalId() {
   return `local-q-${nextId++}`;
 }
 
-function createEmptyQuestion(): LocalQuestion {
+export function createEmptyQuestion(): LocalQuestion {
   return {
     localId: makeLocalId(),
     question: "",
