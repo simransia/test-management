@@ -160,27 +160,19 @@ export function RootLayout() {
         {/* Logo */}
         <div
           className={cn(
-            "flex h-16 items-center border-b border-slate-100",
-            sidebarCollapsed ? "justify-center px-2" : "px-5",
+            "absolute top-0 left-0 z-50 flex h-16 items-center border-b border-r border-slate-200 bg-white",
+            sidebarCollapsed ? "w-[332px] px-6" : "w-[240px] px-6",
           )}
         >
-          {sidebarCollapsed ? (
-            <img
-              src="/preproute-logo.png"
-              alt="Preproute"
-              className="h-8 w-8 object-contain object-left"
-            />
-          ) : (
-            <img
-              src="/preproute-logo.png"
-              alt="Preproute"
-              className="h-8 w-auto object-contain object-left"
-            />
-          )}
+          <img
+            src="/preproute-logo.png"
+            alt="Preproute"
+            className="h-8 w-auto object-contain object-left"
+          />
         </div>
 
         {/* Nav items */}
-        <nav className="flex-1 space-y-1 py-5">
+        <nav className="flex-1 space-y-1 pt-20 pb-5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -235,7 +227,10 @@ export function RootLayout() {
       {/* ── Main Area ── */}
       <div className="flex h-full flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-8">
+        <header className={cn(
+          "flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white pr-8 transition-all duration-200",
+          sidebarCollapsed ? "pl-[292px]" : "pl-8"
+        )}>
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-400">
             {getBreadcrumbs()}
@@ -251,20 +246,22 @@ export function RootLayout() {
             <div className="flex items-center gap-3 border-l border-slate-200 pl-5 cursor-pointer">
               <div className="relative">
                 <img
-                  src="/icons/profile.png"
+                  src="/icons/avatar.png"
                   alt="Avatar"
                   className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
                 />
               </div>
-              <div className="flex flex-col truncate">
-                <span className="text-[15px] font-bold text-[#002a5c]">
-                  {displayName}
-                </span>
+              <div className="flex flex-col truncate relative pr-5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[15px] font-bold text-[#002a5c]">
+                    {displayName}
+                  </span>
+                  <img src="/icons/chevron-down.png" className="h-3.5 w-3.5 object-contain opacity-60" alt="Dropdown" />
+                </div>
                 <span className="text-[11px] font-semibold uppercase text-[#8897a8] tracking-wider">
                   {role}
                 </span>
               </div>
-              <img src="/icons/chevron-down.png" className="h-4 w-4 object-contain ml-2 opacity-60" alt="Dropdown" />
             </div>
           </div>
         </header>
