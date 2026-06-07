@@ -16,7 +16,10 @@ export function RootLayout() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     }
@@ -28,7 +31,13 @@ export function RootLayout() {
 
   const activePath = location.pathname;
 
-  const menuItems = [
+  const menuItems: {
+    name: string;
+    path: string;
+    icon: string;
+    match: boolean;
+    disabled?: boolean;
+  }[] = [
     {
       name: "Dashboard",
       path: "/",
@@ -47,64 +56,10 @@ export function RootLayout() {
             activePath.includes("/publish"))),
     },
     {
-      name: "Admin Management",
-      path: "#",
-      icon: "/icons/sidebar-icons/admin management def.png",
-      disabled: true,
-    },
-    {
-      name: "Resources",
-      path: "#",
-      icon: "/icons/sidebar-icons/resources def.png",
-      disabled: true,
-    },
-    {
-      name: "User Management",
-      path: "#",
-      icon: "/icons/sidebar-icons/Usermanagement def.png",
-      disabled: true,
-    },
-    {
-      name: "Approval",
-      path: "#",
-      icon: "/icons/sidebar-icons/approval def.png",
-      disabled: true,
-    },
-    {
-      name: "Role",
-      path: "#",
-      icon: "/icons/sidebar-icons/role def.png",
-      disabled: true,
-    },
-    {
-      name: "Badges",
-      path: "#",
-      icon: "/icons/sidebar-icons/badges def.png",
-      disabled: true,
-    },
-    {
-      name: "Payments",
-      path: "#",
-      icon: "/icons/sidebar-icons/payments def.png",
-      disabled: true,
-    },
-    {
-      name: "Customer Support",
-      path: "#",
-      icon: "/icons/sidebar-icons/customer support def.png",
-      disabled: true,
-    },
-    {
-      name: "Notification",
-      path: "#",
-      icon: "/icons/sidebar-icons/notification def.png",
-      disabled: true,
-    },
-    {
-      name: "Settings",
-      path: "#",
-      icon: "/icons/sidebar-icons/settings def.png",
-      disabled: true,
+      name: "Test Tracking",
+      path: "/tests/tracking",
+      icon: "clipboard-search",
+      match: activePath.startsWith("/tests/tracking"),
     },
   ];
 
@@ -175,7 +130,7 @@ export function RootLayout() {
         {/* Logo */}
         <div
           className={cn(
-            "absolute top-0 left-0 z-50 flex h-16 items-center border-b border-r border-slate-200 bg-white",
+            "absolute top-0 left-0 z-50 flex h-16 items-center border-r border-slate-200 bg-white",
             sidebarCollapsed ? "w-[332px] px-6" : "w-[240px] px-6",
           )}
         >
@@ -189,40 +144,69 @@ export function RootLayout() {
         {/* Nav items */}
         <nav className="flex-1 space-y-1 pt-20 pb-5">
           {menuItems.map((item) => {
-            const Icon = item.icon;
             return (
-              <Link
-                key={item.name}
-                to={item.disabled ? "#" : item.path}
-                className={cn(
-                  "group relative flex items-center gap-3 text-sm font-bold transition-all overflow-hidden",
-                  sidebarCollapsed
-                    ? "justify-center px-0 py-3 mx-2 rounded-lg"
-                    : "px-6 py-3 rounded-r-full mr-4",
-                  item.match
-                    ? "bg-[#f4f8ff] text-[#1b5def]"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
-                  item.disabled &&
-                    "pointer-events-none opacity-50 cursor-not-allowed",
-                )}
-                onClick={(e) => item.disabled && e.preventDefault()}
+              <div
+                style={{ width: sidebarCollapsed ? "100%" : "auto" }}
+                className="relative ml-1"
               >
                 {/* Active left border indicator */}
-                {item.match && (
-                  <span className="absolute left-0 top-0 bottom-0 w-[4px] rounded-r bg-[#1b5def]" />
+                {item.match && !sidebarCollapsed && (
+                  <span className="absolute left-0 rotate-180 top-0 bottom-0 w-[12px] bg-[#1b5def] rounded-r-2xl" />
                 )}
-                <img
-                  src={item.icon}
-                  alt={item.name}
+                <Link
+                  key={item.name}
+                  to={item.disabled ? "#" : item.path}
                   className={cn(
-                    "h-5 w-5 shrink-0 object-contain",
+                    "group relative flex items-center gap-3 text-sm font-bold transition-all overflow-hidden",
+                    sidebarCollapsed
+                      ? "justify-center px-0 py-3 mx-2 rounded-lg"
+                      : "pl-2 pr-4 py-2.5 rounded-lg mx-1",
                     item.match
-                      ? ""
-                      : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
+                      ? "bg-[#f4f8ff] text-[#1b5def]"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
+                    item.disabled &&
+                      "pointer-events-none opacity-50 cursor-not-allowed",
                   )}
-                />
-                {!sidebarCollapsed && <span>{item.name}</span>}
-              </Link>
+                  onClick={(e) => item.disabled && e.preventDefault()}
+                >
+                  {item.icon === "clipboard-search" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={cn(
+                        "h-5 w-5 shrink-0 transition-colors",
+                        item.match
+                          ? "text-[#1b5def]"
+                          : "text-slate-400 group-hover:text-slate-600",
+                      )}
+                    >
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <circle cx="14" cy="14" r="3" />
+                      <path d="M20 20l-2.5-2.5" />
+                    </svg>
+                  ) : (
+                    <img
+                      src={item.icon}
+                      alt={item.name}
+                      className={cn(
+                        "h-5 w-5 shrink-0",
+                        item.match
+                          ? ""
+                          : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
+                      )}
+                    />
+                  )}
+                  {!sidebarCollapsed && <span>{item.name}</span>}
+                </Link>
+              </div>
             );
           })}
         </nav>
@@ -288,7 +272,7 @@ export function RootLayout() {
                       src="/icons/chevron-down.png"
                       className={cn(
                         "h-3.5 w-3.5 object-contain opacity-60 transition-transform duration-200",
-                        dropdownOpen && "rotate-180"
+                        dropdownOpen && "rotate-180",
                       )}
                       alt="Dropdown"
                     />
