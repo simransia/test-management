@@ -33,7 +33,7 @@ export function Sidebar() {
               key={href}
               to={href}
               className={cn(
-                "flex h-[46px] w-full items-center px-[20px] py-[10px] transition-colors",
+                "flex h-[46px] w-full items-center ml-2 px-[20px] py-[10px] transition-colors",
                 isActive
                   ? "rounded-r-lg border-l-[5px] border-[#384ec7] bg-[#f8faff] text-[#384ec7]"
                   : "text-[#6b7180] hover:bg-[#f8faff]/60",
@@ -41,7 +41,9 @@ export function Sidebar() {
             >
               <span className="flex items-center gap-[9px]">
                 <Icon className="size-5 shrink-0" strokeWidth={1.75} />
-                <span className="text-base font-medium leading-[1.5]">{label}</span>
+                <span className="text-base font-medium leading-[1.5]">
+                  {label}
+                </span>
               </span>
             </Link>
           );

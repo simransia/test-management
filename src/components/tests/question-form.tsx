@@ -142,18 +142,16 @@ export function QuestionForm({
       <div className="mb-6">
         <h4 className="text-sm font-semibold text-slate-700 mb-2">Add Solution</h4>
         <div className="relative">
-          <ReactQuill
-            theme="snow"
-            value={currentQuestion.explanation}
-            onChange={(val) => updateCurrent({ explanation: val })}
-            modules={quillModules}
-            className="bg-white rounded-lg mb-8 [&_.ql-toolbar]:rounded-t-lg [&_.ql-container]:rounded-b-lg [&_.ql-container]:min-h-[100px] [&_.ql-toolbar]:border-slate-200 [&_.ql-container]:border-slate-200"
+          <textarea
+            value={currentQuestion.explanation || ""}
+            onChange={(e) => updateCurrent({ explanation: e.target.value })}
             placeholder="Type here"
+            className="w-full min-h-[120px] rounded-lg border border-slate-300 bg-white p-4 pr-10 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
           />
           <button
             type="button"
             onClick={() => updateCurrent({ explanation: "" })}
-            className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity"
+            className="absolute top-4 right-4 opacity-50 hover:opacity-100 transition-opacity"
           >
             <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
           </button>

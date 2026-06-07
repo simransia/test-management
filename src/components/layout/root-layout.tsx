@@ -1,8 +1,6 @@
+import { useState, useRef, useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router";
-import {
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTestStore } from "@/stores/test-store";
 import { cn } from "@/lib/utils";
@@ -12,6 +10,21 @@ export function RootLayout() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const sidebarCollapsed = useTestStore((s) => s.sidebarCollapsed);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const activePath = location.pathname;
 
@@ -29,7 +42,9 @@ export function RootLayout() {
       match:
         activePath.startsWith("/tests/create") ||
         activePath.startsWith("/tests/edit") ||
-        (activePath.startsWith("/tests/") && (activePath.includes("/questions") || activePath.includes("/publish"))),
+        (activePath.startsWith("/tests/") &&
+          (activePath.includes("/questions") ||
+            activePath.includes("/publish"))),
     },
     {
       name: "Admin Management",
@@ -183,24 +198,27 @@ export function RootLayout() {
                   "group relative flex items-center gap-3 text-sm font-bold transition-all overflow-hidden",
                   sidebarCollapsed
                     ? "justify-center px-0 py-3 mx-2 rounded-lg"
-                    : "px-5 py-3 rounded-r-3xl mr-4",
+                    : "px-6 py-3 rounded-r-full mr-4",
                   item.match
                     ? "bg-[#f4f8ff] text-[#1b5def]"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
-                  item.disabled && "pointer-events-none opacity-50 cursor-not-allowed"
+                  item.disabled &&
+                    "pointer-events-none opacity-50 cursor-not-allowed",
                 )}
                 onClick={(e) => item.disabled && e.preventDefault()}
               >
                 {/* Active left border indicator */}
                 {item.match && (
-                  <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#1b5def]" />
+                  <span className="absolute left-0 top-0 bottom-0 w-[4px] rounded-r bg-[#1b5def]" />
                 )}
                 <img
                   src={item.icon}
                   alt={item.name}
                   className={cn(
                     "h-5 w-5 shrink-0 object-contain",
-                    item.match ? "" : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
+                    item.match
+                      ? ""
+                      : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
                   )}
                 />
                 {!sidebarCollapsed && <span>{item.name}</span>}
@@ -210,7 +228,7 @@ export function RootLayout() {
         </nav>
 
         {/* Logout */}
-        <div className="border-t border-slate-100 p-3">
+        {/* <div className="border-t border-slate-100 p-3">
           <button
             onClick={logout}
             className={cn(
@@ -221,16 +239,18 @@ export function RootLayout() {
             <LogOut className="h-3.5 w-3.5" />
             {!sidebarCollapsed && <span>Log out</span>}
           </button>
-        </div>
+        </div> */}
       </aside>
 
       {/* ── Main Area ── */}
       <div className="flex h-full flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className={cn(
-          "flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white pr-8 transition-all duration-200",
-          sidebarCollapsed ? "pl-[292px]" : "pl-8"
-        )}>
+        <header
+          className={cn(
+            "flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white pr-8 transition-all duration-200",
+            sidebarCollapsed ? "pl-[292px]" : "pl-8",
+          )}
+        >
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-400">
             {getBreadcrumbs()}
@@ -239,29 +259,60 @@ export function RootLayout() {
           {/* Right: Bell + Profile */}
           <div className="flex items-center gap-5">
             <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50">
-              <img src="/icons/bell.png" className="h-5 w-5 object-contain" alt="Notifications" />
+              <img
+                src="/icons/bell.png"
+                className="h-5 w-5 object-contain"
+                alt="Notifications"
+              />
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-green-500 ring-2 ring-white" />
             </button>
 
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-5 cursor-pointer">
-              <div className="relative">
-                <img
-                  src="/icons/avatar.png"
-                  alt="Avatar"
-                  className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
-                />
-              </div>
-              <div className="flex flex-col truncate relative pr-5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-bold text-[#002a5c]">
-                    {displayName}
-                  </span>
-                  <img src="/icons/chevron-down.png" className="h-3.5 w-3.5 object-contain opacity-60" alt="Dropdown" />
+            <div ref={dropdownRef} className="relative">
+              <div
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-3 border-l border-slate-200 pl-5 cursor-pointer select-none"
+              >
+                <div className="relative">
+                  <img
+                    src="/icons/avatar.png"
+                    alt="Avatar"
+                    className="h-10 w-10 rounded-full border border-slate-200 bg-slate-100 object-cover"
+                  />
                 </div>
-                <span className="text-[11px] font-semibold uppercase text-[#8897a8] tracking-wider">
-                  {role}
-                </span>
+                <div className="flex flex-col truncate pr-5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] font-bold text-[#002a5c]">
+                      {displayName}
+                    </span>
+                    <img
+                      src="/icons/chevron-down.png"
+                      className={cn(
+                        "h-3.5 w-3.5 object-contain opacity-60 transition-transform duration-200",
+                        dropdownOpen && "rotate-180"
+                      )}
+                      alt="Dropdown"
+                    />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase text-[#8897a8] tracking-wider">
+                    {role}
+                  </span>
+                </div>
               </div>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-100 bg-white p-1 shadow-lg z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      logout();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Log out</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>

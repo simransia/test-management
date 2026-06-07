@@ -22,6 +22,10 @@ import { EditTestModal } from "@/components/tests/edit-test-modal";
 import { fetchSubjects, fetchTopicsBySubject } from "@/api/test";
 import type { Subject, Topic } from "@/types/test";
 
+import { useTest } from "@/hooks/use-tests";
+import { useQuestions } from "@/hooks/use-questions";
+import { useSubjects, useTopics } from "@/hooks/use-test-metadata";
+
 export default function PublishPage() {
   const navigate = useNavigate();
   const { testId: paramTestId } = useParams<{ testId: string }>();
@@ -40,67 +44,62 @@ export default function PublishPage() {
 
   const testId = paramTestId || storeTestId;
 
-  const [loading, setLoading] = useState(!testData);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [questionPanelCollapsed, setQuestionPanelCollapsed] = useState(false);
-  const [questions, setQuestions] = useState<Question[]>(savedQuestions);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
 
+  // Set sidebar and step
   useEffect(() => {
     setSidebarCollapsed(true);
     setStep("publish");
+  }, [setSidebarCollapsed, setStep]);
 
-    async function load() {
-      if (!testId) {
-        navigate("/tests/create");
-        return;
-      }
-      try {
-        // Load test
-        const tRes = await fetchTestById(testId);
-        if (tRes.status === "success" && tRes.data) {
-          setTestData(tRes.data);
-          setTestId(tRes.data.id);
-          // Load questions
-          if (tRes.data.questions && tRes.data.questions.length > 0) {
-            const qRes = await fetchBulkQuestions(tRes.data.questions);
-            if (qRes.status === "success" && qRes.data) {
-              setQuestions(qRes.data);
-              setSavedQuestions(qRes.data);
-            }
-          }
-        }
-        
-        // Load subjects for resolution
-        const sRes = await fetchSubjects();
-        if (sRes.status === "success" && sRes.data) {
-          setSubjects(sRes.data);
-        }
-      } catch (err) {
-        setError(getApiErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [testId, navigate, setTestData, setTestId, setStep, setSidebarCollapsed, setSavedQuestions]);
-
-  // Load topics when testData subject is available
+  // If no testId at all, redirect
   useEffect(() => {
-    if (!testData?.subject) return;
-    const subjectObj = subjects.find(
-      (s) => s.name === testData.subject || s.id === testData.subject,
-    );
-    if (subjectObj) {
-      fetchTopicsBySubject(subjectObj.id)
-        .then((res) => setTopics(res.data ?? []))
-        .catch(() => {});
+    if (!testId) {
+      navigate("/tests/create");
     }
-  }, [testData?.subject, subjects]);
+  }, [testId, navigate]);
+
+  // Fetch test if not in store
+  const { testData: fetchedTest, isLoading: testLoading, error: testError, reloadTest } = useTest(!testData ? testId : null);
+  
+  useEffect(() => {
+    if (fetchedTest && !testData) {
+      setTestData(fetchedTest);
+      setTestId(fetchedTest.id);
+    }
+  }, [fetchedTest, testData, setTestData, setTestId]);
+
+  // Fetch bulk questions if they exist in the fetched test
+  const { questions, isLoading: questionsLoading } = useQuestions(
+    (!testData && fetchedTest?.questions) ? fetchedTest.questions : null
+  );
+
+  useEffect(() => {
+    if (questions && questions.length > 0) {
+      setSavedQuestions(questions);
+    }
+  }, [questions, setSavedQuestions]);
+
+  // Use the questions from the hook if available, otherwise use from store
+  const displayQuestions = questions.length > 0 ? questions : savedQuestions;
+
+  // Load subjects, topics using custom hooks
+  const { subjects, isLoading: subjectsLoading } = useSubjects();
+
+  const subjectObj = subjects.find(
+    (s) => s.name === testData?.subject || s.id === testData?.subject,
+  );
+  
+  const { topics, isLoading: topicsLoading } = useTopics(subjectObj?.id);
+
+  const loading = testLoading || subjectsLoading;
+
+  useEffect(() => {
+    if (testError) setError(testError);
+  }, [testError]);
 
   const getSubjectName = (id: string) => {
     const s = subjects.find((s) => s.id === id || s.name === id);
@@ -176,7 +175,7 @@ export default function PublishPage() {
               </span>
             </div>
             <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600 border border-green-200">
-              All {questions.length} Questions done ✓
+              All {displayQuestions.length} Questions done ✓
             </span>
           </div>
 
@@ -315,7 +314,7 @@ export default function PublishPage() {
               Questions Preview
             </h2>
             <div className="space-y-4">
-              {questions.map((q, idx) => (
+              {displayQuestions.map((q, idx) => (
                 <div
                   key={q.id}
                   className="rounded-lg border border-slate-200 bg-white p-4"

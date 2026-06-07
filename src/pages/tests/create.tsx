@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useForm, Controller } from "react-hook-form";
-import {
-  fetchSubjects,
-  fetchTopicsBySubject,
-  fetchSubTopicsByMultiTopics,
-  createTest,
-} from "@/api/test";
+import { createTest } from "@/api/test";
 import { useTestStore } from "@/stores/test-store";
 import { getApiErrorMessage } from "@/lib/api";
-import type { Subject, Topic, SubTopic, TestType, TestDifficulty } from "@/types/test";
+import type { TestType, TestDifficulty } from "@/types/test";
 import { Loader2, AlertCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSubjects, useTopics, useSubTopics } from "@/hooks/use-test-metadata";
 
 /* ── Tab types ── */
 const TEST_TYPES: { label: string; value: TestType }[] = [
@@ -40,12 +36,6 @@ export default function CreateTestPage() {
   const { setTestId, setTestData, setStep, setSidebarCollapsed } =
     useTestStore();
 
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
-  const [loadingSubjects, setLoadingSubjects] = useState(true);
-  const [loadingTopics, setLoadingTopics] = useState(false);
-  const [loadingSubTopics, setLoadingSubTopics] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,56 +67,26 @@ export default function CreateTestPage() {
   const selectedSubject = watch("subject");
   const selectedTopics = watch("topics");
 
+  const { subjects, isLoading: loadingSubjects } = useSubjects();
+  const { topics, isLoading: loadingTopics } = useTopics(selectedSubject);
+  const { subTopics, isLoading: loadingSubTopics } = useSubTopics(selectedTopics);
+
+  // Clear topics and sub_topics when subject changes
+  useEffect(() => {
+    setValue("topics", []);
+    setValue("sub_topics", []);
+  }, [selectedSubject, setValue]);
+
+  // Clear sub_topics when topics change
+  useEffect(() => {
+    setValue("sub_topics", []);
+  }, [selectedTopics, setValue]);
+
   // Reset sidebar collapse on mount (fresh create page)
   useEffect(() => {
     setSidebarCollapsed(false);
     setStep("create");
   }, [setSidebarCollapsed, setStep]);
-
-  // Load subjects
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetchSubjects();
-        setSubjects(res.data ?? []);
-      } catch {
-        setError("Failed to load subjects");
-      } finally {
-        setLoadingSubjects(false);
-      }
-    }
-    load();
-  }, []);
-
-  // Load topics when subject changes
-  useEffect(() => {
-    if (!selectedSubject) {
-      setTopics([]);
-      setSubTopics([]);
-      return;
-    }
-    setLoadingTopics(true);
-    setValue("topics", []);
-    setValue("sub_topics", []);
-    fetchTopicsBySubject(selectedSubject)
-      .then((res) => setTopics(res.data ?? []))
-      .catch(() => setTopics([]))
-      .finally(() => setLoadingTopics(false));
-  }, [selectedSubject, setValue]);
-
-  // Load sub-topics when topics change
-  useEffect(() => {
-    if (!selectedTopics || selectedTopics.length === 0) {
-      setSubTopics([]);
-      return;
-    }
-    setLoadingSubTopics(true);
-    setValue("sub_topics", []);
-    fetchSubTopicsByMultiTopics(selectedTopics)
-      .then((res) => setSubTopics(res.data ?? []))
-      .catch(() => setSubTopics([]))
-      .finally(() => setLoadingSubTopics(false));
-  }, [selectedTopics, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);

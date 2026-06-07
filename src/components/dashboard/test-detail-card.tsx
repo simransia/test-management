@@ -1,6 +1,14 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import { Clock, HelpCircle, BarChart3, Pencil, Eye, Trash2, BookOpen } from "lucide-react";
+import {
+  Clock,
+  HelpCircle,
+  BarChart3,
+  Pencil,
+  Eye,
+  Trash2,
+  BookOpen,
+} from "lucide-react";
 import type { Test } from "@/types/test";
 import {
   formatTestType,
@@ -23,13 +31,7 @@ function TopicTag({ label }: { label: string }) {
   );
 }
 
-function InfoRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function InfoRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex items-center gap-[5px]">
       <span className="w-[100px] shrink-0 text-xs text-[#6b7180]">{label}</span>
@@ -58,8 +60,13 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
 
         <div className="flex flex-wrap items-end gap-2.5">
           <div className="flex items-end gap-1.5">
-            <BookOpen className="size-6 shrink-0 text-[#384ec7]" strokeWidth={1.75} />
-            <h3 className="text-base font-bold leading-[1.5] text-black">{test.name}</h3>
+            <BookOpen
+              className="size-6 shrink-0 text-[#384ec7]"
+              strokeWidth={1.75}
+            />
+            <h3 className="text-base font-bold leading-[1.5] text-black">
+              {test.name}
+            </h3>
           </div>
           <span
             className={cn(
@@ -67,7 +74,11 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
               getDifficultyStyles(test.difficulty),
             )}
           >
-            <img src="/icons/cognition.png" alt="Difficulty" className="h-3.5 w-3.5 object-contain" />
+            <img
+              src="/icons/cognition.png"
+              alt="Difficulty"
+              className="h-3.5 w-3.5 object-contain"
+            />
             {formatDifficulty(test.difficulty)}
           </span>
           <span
@@ -84,7 +95,9 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
 
         <div className="flex flex-col gap-[15px]">
           <InfoRow label="Subject">
-            <span className="text-base font-medium text-[#6b7280]">{test.subject}</span>
+            <span className="text-base font-medium text-[#6b7280]">
+              {test.subject}
+            </span>
           </InfoRow>
 
           {topics.length > 0 && (
@@ -108,26 +121,32 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
           )}
 
           <InfoRow label="Created">
-            <span className="text-sm text-[#6b7280]">{formatDate(test.created_at)}</span>
+            <span className="text-sm text-[#6b7280]">
+              {formatDate(test.created_at)}
+            </span>
           </InfoRow>
         </div>
       </div>
 
       <div className="flex shrink-0 flex-col items-end justify-between self-stretch">
         <div className="flex items-center gap-3">
-          <Link
+          {/* <Link
             to={`/tests/view/${test.id}`}
             className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
             title="View test"
           >
             <img src="/icons/eye.png" alt="View" className="size-5 object-contain" />
-          </Link>
+          </Link> */}
           <Link
             to={`/tests/edit/${test.id}`}
             className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
             title="Edit test"
           >
-            <img src="/icons/edit.png" alt="Edit" className="size-5 object-contain" />
+            <img
+              src="/icons/edit.png"
+              alt="Edit"
+              className="size-5 object-contain"
+            />
           </Link>
           <button
             type="button"
@@ -135,13 +154,21 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
             className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-50"
             title="Delete test"
           >
-            <img src="/icons/trash.png" alt="Delete" className="size-5 object-contain" />
+            <img
+              src="/icons/trash.png"
+              alt="Delete"
+              className="size-5 object-contain"
+            />
           </button>
         </div>
 
         <div className="flex h-8 items-center gap-[5px] rounded-lg border border-[#e5e7eb] px-[5px]">
           <div className="flex h-full w-20 items-center gap-1.5 px-1">
-            <img src="/icons/clock.png" alt="Time" className="size-4 object-contain" />
+            <img
+              src="/icons/clock.png"
+              alt="Time"
+              className="size-4 object-contain"
+            />
             <span className="whitespace-nowrap text-sm text-[#374151]">
               {test.total_time} Min
             </span>

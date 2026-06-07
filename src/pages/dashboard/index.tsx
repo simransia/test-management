@@ -1,62 +1,26 @@
-import { useEffect, useState } from "react";
-import { fetchAllTests, deleteTest } from "@/api/test";
+import { useState } from "react";
 import type { Test } from "@/types/test";
-import { getApiErrorMessage } from "@/lib/api";
 import { TestDetailCard } from "@/components/dashboard/test-detail-card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state";
 import { DashboardDeleteModal } from "@/components/dashboard/dashboard-delete-modal";
 import { AlertCircle } from "lucide-react";
+import { useTests, useDeleteTest } from "@/hooks/use-tests";
 
 export default function DashboardPage() {
-  const [tests, setTests] = useState<Test[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { tests, isLoading, error, removeTestFromState } = useTests();
+  const { isDeleting, deleteError, performDelete, setDeleteError } = useDeleteTest();
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-
   const [testToDelete, setTestToDelete] = useState<Test | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadData() {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const testsRes = await fetchAllTests();
-        if (testsRes.status === "success" || testsRes.success) {
-          setTests(testsRes.data ?? []);
-        } else {
-          setError(testsRes.message ?? "Failed to load tests.");
-        }
-      } catch (err) {
-        setError(getApiErrorMessage(err, "An error occurred while loading data."));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, []);
 
   const handleDeleteConfirm = async () => {
     if (!testToDelete) return;
-    setIsDeleting(true);
-    setDeleteError(null);
-    try {
-      const res = await deleteTest(testToDelete.id);
-      if (res.status === "success" || res.success) {
-        setTests((prev) => prev.filter((t) => t.id !== testToDelete.id));
-        setTestToDelete(null);
-      } else {
-        setDeleteError(res.message ?? "Failed to delete test.");
-      }
-    } catch (err) {
-      setDeleteError(
-        getApiErrorMessage(err, "Failed to delete the test. Please try again."),
-      );
-    } finally {
-      setIsDeleting(false);
+    const success = await performDelete(testToDelete.id);
+    if (success) {
+      removeTestFromState(testToDelete.id);
+      setTestToDelete(null);
     }
   };
 

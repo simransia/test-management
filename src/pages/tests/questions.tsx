@@ -26,11 +26,19 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatTestType, formatDifficulty, getDifficultyStyles } from "@/lib/test-utils";
+import {
+  formatTestType,
+  formatDifficulty,
+  getDifficultyStyles,
+} from "@/lib/test-utils";
 import { EditTestModal } from "@/components/tests/edit-test-modal";
 import { QuestionSidebar } from "@/components/tests/question-sidebar";
 import { TestSummaryBanner } from "@/components/tests/test-summary-banner";
 import { QuestionForm } from "@/components/tests/question-form";
+
+import { useSubjects, useTopics, useSubTopics } from "@/hooks/use-test-metadata";
+import { useTest } from "@/hooks/use-tests";
+import { useQuestions } from "@/hooks/use-questions";
 
 export default function QuestionsPage() {
   const navigate = useNavigate();
@@ -55,61 +63,44 @@ export default function QuestionsPage() {
 
   const testId = paramTestId || storeTestId;
 
-  const [loading, setLoading] = useState(!testData);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [questionPanelCollapsed, setQuestionPanelCollapsed] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Dropdown data for question settings
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
-
-  // Load test data if not in store
+  // Set sidebar and step
   useEffect(() => {
     setSidebarCollapsed(true);
     setStep("questions");
+  }, [setSidebarCollapsed, setStep]);
 
-    async function load() {
-      if (!testId) {
-        navigate("/tests/create");
-        return;
-      }
-      try {
-        if (!testData) {
-          const res = await fetchTestById(testId);
-          if (res.status === "success" && res.data) {
-            setTestData(res.data);
-            setTestId(res.data.id);
-            if (res.data.questions && res.data.questions.length > 0) {
-              const qRes = await fetchBulkQuestions(res.data.questions);
-              if (qRes.status === "success" && qRes.data) {
-                setSavedQuestions(qRes.data);
-              }
-            }
-          }
-        }
-        // Load subjects for question settings
-        const sRes = await fetchSubjects();
-        setSubjects(sRes.data ?? []);
-      } catch (err) {
-        setError(getApiErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
+  // If no testId at all, redirect
+  useEffect(() => {
+    if (!testId) {
+      navigate("/tests/create");
     }
-    load();
-  }, [
-    testId,
-    testData,
-    navigate,
-    setTestData,
-    setTestId,
-    setStep,
-    setSidebarCollapsed,
-    setSavedQuestions,
-  ]);
+  }, [testId, navigate]);
+
+  // Fetch test if not in store
+  const { testData: fetchedTest, isLoading: testLoading, error: testError } = useTest(!testData ? testId : null);
+  
+  useEffect(() => {
+    if (fetchedTest && !testData) {
+      setTestData(fetchedTest);
+      setTestId(fetchedTest.id);
+    }
+  }, [fetchedTest, testData, setTestData, setTestId]);
+
+  // Fetch bulk questions if they exist in the fetched test
+  const { questions: fetchedQuestions, isLoading: questionsLoading } = useQuestions(
+    (!testData && fetchedTest?.questions) ? fetchedTest.questions : null
+  );
+
+  useEffect(() => {
+    if (fetchedQuestions && fetchedQuestions.length > 0) {
+      setSavedQuestions(fetchedQuestions);
+    }
+  }, [fetchedQuestions, setSavedQuestions]);
 
   // Initialize empty questions if testData is loaded and local questions are in initial state
   useEffect(() => {
@@ -124,28 +115,23 @@ export default function QuestionsPage() {
     }
   }, [testData, localQuestions, setLocalQuestions]);
 
-  // Load topics when testData subject is available
-  useEffect(() => {
-    if (!testData?.subject) return;
-    // find subject id — testData.subject might be a name, we need to find the id
-    const subjectObj = subjects.find(
-      (s) => s.name === testData.subject || s.id === testData.subject,
-    );
-    if (subjectObj) {
-      fetchTopicsBySubject(subjectObj.id)
-        .then((res) => setTopics(res.data ?? []))
-        .catch(() => {});
-    }
-  }, [testData?.subject, subjects]);
+  // Load subjects, topics, and subtopics using custom hooks
+  const { subjects, isLoading: subjectsLoading } = useSubjects();
 
-  // Load subtopics
+  const subjectObj = subjects.find(
+    (s) => s.name === testData?.subject || s.id === testData?.subject,
+  );
+  
+  const { topics, isLoading: topicsLoading } = useTopics(subjectObj?.id);
+
+  const topicIds = topics.map((t) => t.id);
+  const { subTopics, isLoading: subTopicsLoading } = useSubTopics(topicIds);
+
+  const loading = testLoading || subjectsLoading;
+
   useEffect(() => {
-    if (topics.length === 0) return;
-    const topicIds = topics.map((t) => t.id);
-    fetchSubTopicsByMultiTopics(topicIds)
-      .then((res) => setSubTopics(res.data ?? []))
-      .catch(() => {});
-  }, [topics]);
+    if (testError) setError(testError);
+  }, [testError]);
 
   const getSubjectName = (id: string) => {
     const s = subjects.find((s) => s.id === id || s.name === id);
@@ -295,7 +281,7 @@ export default function QuestionsPage() {
               setSidebarCollapsed(false);
               navigate("/tests/create");
             }}
-            className="rounded-lg bg-[#ff6b6b] px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#ff5252]"
+            className="rounded-lg bg-[#FF7F7F] px-5 py-2.5 text-sm text-white shadow-sm hover:bg-[#ff5252]"
           >
             Exit Test Creation
           </button>
@@ -303,7 +289,7 @@ export default function QuestionsPage() {
             type="button"
             onClick={handleSaveAndContinue}
             disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-10 py-2.5 text-sm text-white shadow-sm hover:opacity-90 disabled:opacity-60"
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Next
