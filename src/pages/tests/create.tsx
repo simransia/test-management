@@ -8,6 +8,7 @@ import type { TestType, TestDifficulty } from "@/types/test";
 import { Loader2, AlertCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSubjects, useTopics, useSubTopics } from "@/hooks/use-test-metadata";
+import { Input, Label, Radio, Button } from "@/components/ui";
 
 /* ── Tab types ── */
 const TEST_TYPES: { label: string; value: TestType }[] = [
@@ -126,19 +127,19 @@ export default function CreateTestPage() {
           {/* Test Type Tabs */}
           <div className="flex items-center gap-1 border border-slate-100 rounded-xl p-1 w-fit mb-8 bg-white shadow-sm">
             {TEST_TYPES.map((tt) => (
-              <button
+              <Button
                 key={tt.value}
                 type="button"
                 onClick={() => setValue("type", tt.value)}
                 className={cn(
-                  "px-6 py-2 text-sm font-semibold transition-colors rounded-lg",
+                  "px-6 py-2 text-sm font-semibold transition-colors rounded-lg border-none shadow-none h-auto cursor-pointer",
                   selectedType === tt.value
-                    ? "bg-[#f4f8ff] text-[#1b5def]"
-                    : "text-slate-400 hover:text-slate-600",
+                    ? "bg-[#f4f8ff] text-primary hover:bg-[#f4f8ff]"
+                    : "bg-transparent text-slate-400 hover:text-slate-600 hover:bg-transparent",
                 )}
               >
                 {tt.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -153,13 +154,13 @@ export default function CreateTestPage() {
           <div className="grid grid-cols-2 gap-x-10 gap-y-6">
             {/* Subject */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Subject</label>
+              <Label variant="default">Subject</Label>
               <div className="relative">
                 <select
                   {...register("subject", { required: "Subject is required" })}
                   disabled={loadingSubjects}
                   className={cn(
-                    "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
+                    "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
                     errors.subject ? "border-red-400" : "border-slate-300",
                   )}
                 >
@@ -179,14 +180,11 @@ export default function CreateTestPage() {
 
             {/* Name of Test */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Name of Test</label>
-              <input
+              <Label variant="default">Name of Test</Label>
+              <Input
                 {...register("name", { required: "Test name is required" })}
                 placeholder="Enter name of Test"
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                  errors.name ? "border-red-400" : "border-slate-300",
-                )}
+                error={!!errors.name}
               />
               {errors.name && (
                 <p className="text-xs text-red-500">{errors.name.message}</p>
@@ -195,7 +193,7 @@ export default function CreateTestPage() {
 
             {/* Topic */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Topic</label>
+              <Label variant="default">Topic</Label>
               <Controller
                 name="topics"
                 control={control}
@@ -212,7 +210,7 @@ export default function CreateTestPage() {
                         }
                       }}
                       className={cn(
-                        "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
+                        "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
                         errors.topics ? "border-red-400" : "border-slate-300",
                       )}
                     >
@@ -243,10 +241,10 @@ export default function CreateTestPage() {
                     return (
                       <span
                         key={tid}
-                        className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-[#1b5def]"
+                        className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-primary"
                       >
                         {t?.name ?? tid}
-                        <button
+                        <Button
                           type="button"
                           onClick={() =>
                             setValue(
@@ -254,10 +252,10 @@ export default function CreateTestPage() {
                               selectedTopics.filter((x) => x !== tid),
                             )
                           }
-                          className="ml-0.5 text-[#1b5def]/60 hover:text-[#1b5def]"
+                          className="ml-0.5 text-primary/60 hover:text-primary bg-transparent border-none shadow-none h-auto w-auto min-w-0 p-0 font-normal cursor-pointer"
                         >
                           ×
-                        </button>
+                        </Button>
                       </span>
                     );
                   })}
@@ -270,7 +268,7 @@ export default function CreateTestPage() {
 
             {/* Sub Topic */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Sub Topic</label>
+              <Label variant="default">Sub Topic</Label>
               <Controller
                 name="sub_topics"
                 control={control}
@@ -285,7 +283,7 @@ export default function CreateTestPage() {
                           field.onChange([...field.value, val]);
                         }
                       }}
-                      className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
+                      className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                     >
                       <option value="">
                         {loadingSubTopics
@@ -314,10 +312,10 @@ export default function CreateTestPage() {
                     return (
                       <span
                         key={stId}
-                        className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-[#1b5def]"
+                        className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-primary"
                       >
                         {st?.name ?? stId}
-                        <button
+                        <Button
                           type="button"
                           onClick={() =>
                             setValue(
@@ -325,10 +323,10 @@ export default function CreateTestPage() {
                               watch("sub_topics").filter((x) => x !== stId),
                             )
                           }
-                          className="ml-0.5 text-[#1b5def]/60 hover:text-[#1b5def]"
+                          className="ml-0.5 text-primary/60 hover:text-primary bg-transparent border-none shadow-none h-auto w-auto min-w-0 p-0 font-normal cursor-pointer"
                         >
                           ×
-                        </button>
+                        </Button>
                       </span>
                     );
                   })}
@@ -338,18 +336,15 @@ export default function CreateTestPage() {
 
             {/* Duration (Minutes) */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Duration (Minutes)</label>
-              <input
+              <Label variant="default">Duration (Minutes)</Label>
+              <Input
                 type="number"
                 {...register("total_time", {
                   required: "Duration is required",
                   min: { value: 1, message: "Must be at least 1" },
                 })}
                 placeholder="Enter the time"
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                  errors.total_time ? "border-red-400" : "border-slate-300",
-                )}
+                error={!!errors.total_time}
               />
               {errors.total_time && (
                 <p className="text-xs text-red-500">{errors.total_time.message}</p>
@@ -358,20 +353,18 @@ export default function CreateTestPage() {
 
             {/* Test Difficulty Level */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-slate-700">Test Difficulty Level</label>
+              <Label variant="default">Test Difficulty Level</Label>
               <div className="flex items-center gap-6 h-11">
                 {(["easy", "medium", "hard"] as TestDifficulty[]).map((d) => (
-                  <label key={d} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
+                  <Label key={d} variant="inline">
+                    <Radio
                       value={d}
                       {...register("difficulty")}
-                      className="h-4 w-4 text-[#1b5def] accent-[#1b5def]"
                     />
                     <span className="text-sm text-slate-600 capitalize">
                       {d === "hard" ? "Difficult" : d.charAt(0).toUpperCase() + d.slice(1)}
                     </span>
-                  </label>
+                  </Label>
                 ))}
               </div>
             </div>
@@ -383,65 +376,56 @@ export default function CreateTestPage() {
             <div className="grid grid-cols-5 gap-6">
               {/* Wrong Answer */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-slate-500">Wrong Answer</label>
-                <input
+                <Label variant="muted">Wrong Answer</Label>
+                <Input
                   type="number"
                   {...register("wrong_marks")}
-                  className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                 />
               </div>
 
               {/* Unattempted */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-slate-500">Unattempted</label>
-                <input
+                <Label variant="muted">Unattempted</Label>
+                <Input
                   type="number"
                   {...register("unattempt_marks")}
-                  className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                 />
               </div>
 
               {/* Correct Answer */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-slate-500">Correct Answer</label>
-                <input
+                <Label variant="muted">Correct Answer</Label>
+                <Input
                   type="number"
                   {...register("correct_marks")}
-                  className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                 />
               </div>
 
               {/* No of Questions */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-slate-500">No of Questions</label>
-                <input
+                <Label variant="muted">No of Questions</Label>
+                <Input
                   type="number"
                   {...register("total_questions", {
                     required: "Required",
                     min: { value: 1, message: "At least 1" },
                   })}
                   placeholder="Ex.250 Marks"
-                  className={cn(
-                    "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                    errors.total_questions ? "border-red-400" : "border-slate-300",
-                  )}
+                  error={!!errors.total_questions}
                 />
               </div>
 
               {/* Total Marks */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-slate-500">Total Marks</label>
-                <input
+                <Label variant="muted">Total Marks</Label>
+                <Input
                   type="number"
                   {...register("total_marks", {
                     required: "Required",
                     min: { value: 1, message: "At least 1" },
                   })}
                   placeholder="Ex.250 Marks"
-                  className={cn(
-                    "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                    errors.total_marks ? "border-red-400" : "border-slate-300",
-                  )}
+                  error={!!errors.total_marks}
                 />
               </div>
             </div>
@@ -450,21 +434,21 @@ export default function CreateTestPage() {
 
         {/* Bottom action bar */}
         <div className="flex items-center justify-end gap-4 border-t border-slate-200 bg-white px-8 py-4">
-          <button
+          <Button
             type="button"
             onClick={() => navigate("/")}
-            className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-[#1b5def] hover:bg-[#ebf2ff]"
+            className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] border-none shadow-none h-auto cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={submitting}
-            className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-8 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity disabled:opacity-60 border-none h-auto cursor-pointer"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             Next
-          </button>
+          </Button>
         </div>
       </form>
     </div>

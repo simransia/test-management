@@ -25,6 +25,7 @@ import type { Subject, Topic } from "@/types/test";
 import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
 import { useSubjects, useTopics } from "@/hooks/use-test-metadata";
+import { Input, Label, Radio, Button } from "@/components/ui";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -137,7 +138,7 @@ export default function PublishPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-8 w-8 animate-spin text-[#1b5def]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -192,13 +193,14 @@ export default function PublishPage() {
                 >
                   {formatTestType(testData.type)}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setIsEditModalOpen(true)}
-                  className="p-1.5 rounded-md hover:bg-slate-100 transition-colors"
+                  className="p-1.5 rounded-md hover:bg-slate-100 transition-colors border-none shadow-none h-auto w-auto min-w-0 cursor-pointer"
                 >
                   <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
-                </button>
+                </Button>
               </div>
 
               <div className="flex items-center gap-3 mb-3">
@@ -248,18 +250,18 @@ export default function PublishPage() {
           {/* Publishing Options */}
           <div className="mb-10">
             <div className="flex items-center gap-6 border-b border-slate-200 mb-6">
-              <button
+              <Button
                 type="button"
-                className="pb-2 border-b-2 border-[#1b5def] text-sm font-bold text-[#1b5def]"
+                className="pb-2 border-none border-b-2 border-b-primary text-sm font-bold text-primary bg-transparent rounded-none h-auto p-0 shadow-none cursor-pointer"
               >
                 Publish Now
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="pb-2 text-sm font-semibold text-slate-400 hover:text-slate-600"
+                className="pb-2 text-sm font-semibold text-slate-400 hover:text-slate-600 bg-transparent rounded-none h-auto p-0 border-none shadow-none cursor-pointer"
               >
                 Schedule Publish
-              </button>
+              </Button>
             </div>
 
             <h3 className="text-sm font-bold text-slate-800 mb-2">Live Until</h3>
@@ -278,29 +280,26 @@ export default function PublishPage() {
                   "Custom Duration",
                 ] as const
               ).map((option) => (
-                <label key={option} className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="radio"
+                <Label key={option} variant="inline" className="gap-3">
+                  <Radio
                     name="live_until"
                     value={option}
                     defaultChecked={option === "Custom Duration"}
-                    className="h-4 w-4 text-[#1b5def] accent-[#1b5def]"
                   />
                   <span className="text-sm text-slate-600">{option}</span>
-                </label>
+                </Label>
               ))}
             </div>
 
             <div className="flex items-center gap-4 max-w-2xl">
               <div className="flex-1 relative">
-                <input
+                <Input
                   type="text"
                   placeholder="Select End Date"
-                  className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                 />
               </div>
               <div className="flex-1 relative">
-                <select className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def] text-slate-400">
+                <select className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-slate-400">
                   <option value="">Select End Time</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -321,7 +320,7 @@ export default function PublishPage() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <p className="text-sm font-medium text-slate-700">
-                      <span className="text-[#1b5def] font-bold">
+                      <span className="text-primary font-bold">
                         Q{idx + 1}.{" "}
                       </span>
                       {q.question}
@@ -384,22 +383,22 @@ export default function PublishPage() {
 
         {/* Bottom bar */}
         <div className="flex items-center justify-end gap-4 border-t border-slate-200 bg-white px-8 py-4">
-          <button
+          <Button
             type="button"
             onClick={() => navigate(`/tests/${testId}/questions`)}
-            className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-[#1b5def] hover:bg-[#ebf2ff]"
+            className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] h-auto border-none shadow-none cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handlePublish}
             disabled={publishing}
-            className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2.5 text-sm font-bold text-white shadow-sm disabled:opacity-60 h-auto border-none cursor-pointer"
           >
             {publishing && <Loader2 className="h-4 w-4 animate-spin" />}
             Confirm
-          </button>
+          </Button>
         </div>
       </div>
 

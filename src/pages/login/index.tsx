@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getApiErrorMessage } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { Input, Label, Button } from "@/components/ui";
 
 const loginSchema = z.object({
   userId: z.string().trim().min(1, "User ID is required"),
@@ -11,9 +12,6 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
-
-const inputClassName =
-  "h-[50px] w-full rounded-lg border border-[#60a5fa] bg-white px-4 text-base font-normal text-[#374151] placeholder-[#d1d5db] focus:border-[#5988ef] focus:outline-none focus:ring-1 focus:ring-[#5988ef] transition-colors";
 
 export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
@@ -33,14 +31,16 @@ export default function LoginPage() {
     try {
       await login(values);
     } catch (error) {
-      setApiError(getApiErrorMessage(error, "Invalid credentials. Please try again."));
+      setApiError(
+        getApiErrorMessage(error, "Invalid credentials. Please try again."),
+      );
     }
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#f7fbff]">
+    <div className="flex h-screen w-screen overflow-hidden bg-login-bg">
       {/* Left side — Illustration Panel (approx 47% width) */}
-      <div className="hidden h-full w-[47%] shrink-0 items-center justify-center lg:flex bg-[#f7fbff]">
+      <div className="hidden h-full w-[47%] shrink-0 items-center justify-center lg:flex bg-login-bg">
         <img
           src="/login-illustration.svg"
           alt="Illustration"
@@ -89,65 +89,70 @@ export default function LoginPage() {
               <div className="flex flex-col gap-6">
                 {/* User ID Field */}
                 <div className="flex flex-col gap-2">
-                  <label
+                  <Label
                     htmlFor="userId"
-                    className="text-sm font-medium text-[#374151]"
+                    variant="login"
                   >
                     User ID
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="userId"
+                    variant="login"
                     type="text"
                     placeholder="Enter User ID"
                     autoComplete="username"
                     aria-invalid={Boolean(errors.userId)}
-                    className={inputClassName}
                     {...register("userId")}
                   />
                   {errors.userId && (
-                    <p className="text-xs text-red-500 mt-1">{errors.userId.message}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.userId.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Password Field */}
                 <div className="flex flex-col gap-2">
-                  <label
+                  <Label
                     htmlFor="password"
-                    className="text-sm font-medium text-[#374151]"
+                    variant="login"
                   >
                     Password
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="password"
+                    variant="login"
                     type="password"
                     placeholder="Enter Password"
                     autoComplete="current-password"
                     aria-invalid={Boolean(errors.password)}
-                    className={inputClassName}
                     {...register("password")}
                   />
                   {errors.password && (
-                    <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.password.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Forgot Password Link */}
-                <button
+                <Button
                   type="button"
-                  className="w-fit text-sm font-medium text-[#1b5def] hover:underline self-start -mt-2"
+                  variant="link"
+                  className="w-fit text-sm font-medium text-primary hover:underline self-start -mt-2 p-0 cursor-pointer"
                 >
                   Forgot password?
-                </button>
+                </Button>
               </div>
 
               {/* Login Button */}
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-8 flex h-[50px] w-full items-center justify-center rounded-lg bg-[#5988ef] px-5 text-base font-semibold text-[#fafafa] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-8 flex h-[50px] w-full items-center justify-center rounded-lg bg-primary hover:bg-primary/90 text-base font-semibold text-[#fafafa] transition-opacity disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
               >
                 {isSubmitting ? "Logging in..." : "Login"}
-              </button>
+              </Button>
             </form>
           </div>
         </div>

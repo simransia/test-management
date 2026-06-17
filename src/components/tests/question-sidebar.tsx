@@ -40,7 +40,7 @@ export function QuestionSidebar({
           <button
             type="button"
             onClick={() => setQuestionPanelCollapsed(true)}
-            className="text-[#1b5def] hover:opacity-80"
+            className="text-primary hover:opacity-80"
           >
             <img
               src="/icons/blue-double-arrow-left.png"
@@ -67,7 +67,7 @@ export function QuestionSidebar({
                   filled
                     ? "border-green-500 bg-white text-green-600 font-medium"
                     : "border-slate-200 bg-white text-slate-400 font-medium",
-                  activeQuestionIndex === idx && !filled && "border-[#1b5def] text-[#1b5def]",
+                  activeQuestionIndex === idx && !filled && "border-primary text-primary",
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export function QuestionSidebar({
           <button
             type="button"
             onClick={addLocalQuestion}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-[#1b5def] py-2.5 text-sm font-semibold text-[#1b5def] hover:bg-[#f4f8ff]"
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary py-2.5 text-sm font-semibold text-primary hover:bg-[#f4f8ff] cursor-pointer"
           >
             <img
               src="/icons/plus.png"

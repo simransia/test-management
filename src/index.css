@@ -33,7 +33,6 @@
   --color-login-text: #374151;
   --color-login-placeholder: #d1d5db;
   --color-login-border: #9ca3af;
-  --color-login-link: #1b5def;
   --color-login-button: #5988ef;
   --color-login-button-text: #fafafa;
 }
@@ -46,7 +45,7 @@
   --card-foreground: #374151;
   --popover: #ffffff;
   --popover-foreground: #374151;
-  --primary: #5988ef;
+  --primary: #7489FF;
   --primary-foreground: #fafafa;
   --secondary: #f7fbff;
   --secondary-foreground: #374151;
@@ -57,7 +56,7 @@
   --destructive: #ef4444;
   --border: #9ca3af;
   --input: #9ca3af;
-  --ring: #5988ef;
+  --ring: #7489FF;
 }
 
 @layer base {

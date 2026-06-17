@@ -24,7 +24,7 @@ export function DashboardEmptyState({
         <button
           type="button"
           onClick={onClearSearch}
-          className="mt-4 text-sm font-semibold text-[#1b5def] hover:underline"
+          className="mt-4 text-sm font-semibold text-primary hover:underline cursor-pointer"
         >
           Clear search
         </button>

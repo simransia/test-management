@@ -151,7 +151,7 @@ export function RootLayout() {
               >
                 {/* Active left border indicator */}
                 {item.match && !sidebarCollapsed && (
-                  <span className="absolute left-0 rotate-180 top-0 bottom-0 w-[12px] bg-[#1b5def] rounded-r-2xl" />
+                  <span className="absolute left-0 rotate-180 top-0 bottom-0 w-[12px] bg-primary rounded-r-2xl" />
                 )}
                 <Link
                   key={item.name}
@@ -162,7 +162,7 @@ export function RootLayout() {
                       ? "justify-center px-0 py-3 mx-2 rounded-lg"
                       : "pl-2 pr-4 py-2.5 rounded-lg mx-1",
                     item.match
-                      ? "bg-[#f4f8ff] text-[#1b5def]"
+                      ? "bg-[#f4f8ff] text-primary"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
                     item.disabled &&
                       "pointer-events-none opacity-50 cursor-not-allowed",
@@ -182,8 +182,8 @@ export function RootLayout() {
                       strokeLinejoin="round"
                       className={cn(
                         "h-5 w-5 shrink-0 transition-colors",
-                        item.match
-                          ? "text-[#1b5def]"
+                         item.match
+                          ? "text-primary"
                           : "text-slate-400 group-hover:text-slate-600",
                       )}
                     >

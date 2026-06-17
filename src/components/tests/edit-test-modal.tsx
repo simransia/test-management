@@ -18,6 +18,7 @@ import type {
 import { Loader2, AlertCircle, ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input, Label, Radio, Button } from "@/components/ui";
 
 const TEST_TYPES: { label: string; value: TestType }[] = [
   { label: "Chapter Wise", value: "chapterwise" },
@@ -198,7 +199,7 @@ export function EditTestModal({
       <DialogContent className="max-w-5xl min-w-[75%] p-0 gap-0 overflow-hidden bg-white rounded-2xl shadow-xl border-none [&>button]:hidden flex flex-col max-h-[95vh]">
         {loading ? (
           <div className="flex h-[400px] items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1b5def]" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
           <>
@@ -206,12 +207,12 @@ export function EditTestModal({
               <h2 className="text-base font-bold text-slate-600">
                 Edit Test creation
               </h2>
-              <button
+              <Button
                 onClick={onClose}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-slate-400 hover:text-slate-600 p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
               >
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
 
             <form
@@ -221,19 +222,19 @@ export function EditTestModal({
               <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4">
                 <div className="flex items-center gap-1 border border-slate-100 rounded-xl p-1 w-fit mb-8 bg-white shadow-sm">
                   {TEST_TYPES.map((tt) => (
-                    <button
+                    <Button
                       key={tt.value}
                       type="button"
                       onClick={() => setValue("type", tt.value)}
                       className={cn(
-                        "px-6 py-2 text-sm font-semibold transition-colors rounded-lg",
+                        "px-6 py-2 text-sm font-semibold transition-colors rounded-lg border-none shadow-none h-auto cursor-pointer",
                         selectedType === tt.value
-                          ? "bg-[#f4f8ff] text-[#1b5def]"
-                          : "text-slate-400 hover:text-slate-600",
+                          ? "bg-[#f4f8ff] text-primary hover:bg-[#f4f8ff]"
+                          : "bg-transparent text-slate-400 hover:text-slate-600 hover:bg-transparent",
                       )}
                     >
                       {tt.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 
@@ -247,9 +248,7 @@ export function EditTestModal({
                 <div className="grid grid-cols-2 gap-x-10 gap-y-6">
                   {/* Subject */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Subject
-                    </label>
+                    <Label variant="default">Subject</Label>
                     <div className="relative">
                       <select
                         {...register("subject", {
@@ -257,7 +256,7 @@ export function EditTestModal({
                         })}
                         disabled={subjects.length === 0}
                         className={cn(
-                          "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
+                          "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
                           errors.subject
                             ? "border-red-400"
                             : "border-slate-300",
@@ -281,18 +280,13 @@ export function EditTestModal({
 
                   {/* Name of Test */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Name of Test
-                    </label>
-                    <input
+                    <Label variant="default">Name of Test</Label>
+                    <Input
                       {...register("name", {
                         required: "Test name is required",
                       })}
                       placeholder="Enter name of Test"
-                      className={cn(
-                        "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                        errors.name ? "border-red-400" : "border-slate-300",
-                      )}
+                      error={!!errors.name}
                     />
                     {errors.name && (
                       <p className="text-xs text-red-500">
@@ -303,9 +297,7 @@ export function EditTestModal({
 
                   {/* Topic */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Topic
-                    </label>
+                    <Label variant="default">Topic</Label>
                     <Controller
                       name="topics"
                       control={control}
@@ -325,7 +317,7 @@ export function EditTestModal({
                               }
                             }}
                             className={cn(
-                              "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
+                              "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
                               errors.topics
                                 ? "border-red-400"
                                 : "border-slate-300",
@@ -363,10 +355,10 @@ export function EditTestModal({
                           return (
                             <span
                               key={tid}
-                              className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-[#1b5def]"
+                              className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-primary"
                             >
                               {t?.name ?? tid}
-                              <button
+                              <Button
                                 type="button"
                                 onClick={() =>
                                   setValue(
@@ -374,10 +366,10 @@ export function EditTestModal({
                                     selectedTopics.filter((x) => x !== tid),
                                   )
                                 }
-                                className="ml-0.5 text-[#1b5def]/60 hover:text-[#1b5def]"
+                                className="ml-0.5 text-primary/60 hover:text-primary bg-transparent border-none shadow-none h-auto w-auto min-w-0 p-0 font-normal cursor-pointer"
                               >
                                 ×
-                              </button>
+                              </Button>
                             </span>
                           );
                         })}
@@ -392,9 +384,7 @@ export function EditTestModal({
 
                   {/* Sub Topic */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Sub Topic
-                    </label>
+                    <Label variant="default">Sub Topic</Label>
                     <Controller
                       name="sub_topics"
                       control={control}
@@ -411,7 +401,7 @@ export function EditTestModal({
                                 field.onChange([...field.value, val]);
                               }
                             }}
-                            className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
+                            className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                           >
                             <option value="">
                               {loadingSubTopics
@@ -445,10 +435,10 @@ export function EditTestModal({
                           return (
                             <span
                               key={stId}
-                              className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-[#1b5def]"
+                              className="inline-flex items-center gap-1 rounded-md bg-[#f4f8ff] px-2 py-1 text-xs font-medium text-primary"
                             >
                               {st?.name ?? stId}
-                              <button
+                              <Button
                                 type="button"
                                 onClick={() =>
                                   setValue(
@@ -458,10 +448,10 @@ export function EditTestModal({
                                     ),
                                   )
                                 }
-                                className="ml-0.5 text-[#1b5def]/60 hover:text-[#1b5def]"
+                                className="ml-0.5 text-primary/60 hover:text-primary bg-transparent border-none shadow-none h-auto w-auto min-w-0 p-0 font-normal cursor-pointer"
                               >
                                 ×
-                              </button>
+                              </Button>
                             </span>
                           );
                         })}
@@ -471,22 +461,15 @@ export function EditTestModal({
 
                   {/* Duration */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Duration (Minutes)
-                    </label>
-                    <input
+                    <Label variant="default">Duration (Minutes)</Label>
+                    <Input
                       type="number"
                       {...register("total_time", {
                         required: "Duration is required",
                         min: { value: 1, message: "Must be at least 1" },
                       })}
                       placeholder="Enter the time"
-                      className={cn(
-                        "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                        errors.total_time
-                          ? "border-red-400"
-                          : "border-slate-300",
-                      )}
+                      error={!!errors.total_time}
                     />
                     {errors.total_time && (
                       <p className="text-xs text-red-500">
@@ -497,28 +480,24 @@ export function EditTestModal({
 
                   {/* Test Difficulty */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Test Difficulty Level
-                    </label>
+                    <Label variant="default">Test Difficulty Level</Label>
                     <div className="flex items-center gap-6 h-11">
                       {(["easy", "medium", "hard"] as TestDifficulty[]).map(
                         (d) => (
-                          <label
+                          <Label
                             key={d}
-                            className="flex items-center gap-2 cursor-pointer"
+                            variant="inline"
                           >
-                            <input
-                              type="radio"
+                            <Radio
                               value={d}
                               {...register("difficulty")}
-                              className="h-4 w-4 text-[#1b5def] accent-[#1b5def]"
                             />
                             <span className="text-sm text-slate-600 capitalize">
                               {d === "hard"
                                 ? "Difficult"
                                 : d.charAt(0).toUpperCase() + d.slice(1)}
                             </span>
-                          </label>
+                          </Label>
                         ),
                       )}
                     </div>
@@ -532,71 +511,48 @@ export function EditTestModal({
                   </h3>
                   <div className="grid grid-cols-5 gap-6">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-slate-500">
-                        Wrong Answer
-                      </label>
-                      <input
+                      <Label variant="muted">Wrong Answer</Label>
+                      <Input
                         type="number"
                         {...register("wrong_marks")}
-                        className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-slate-500">
-                        Unattempted
-                      </label>
-                      <input
+                      <Label variant="muted">Unattempted</Label>
+                      <Input
                         type="number"
                         {...register("unattempt_marks")}
-                        className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-slate-500">
-                        Correct Answer
-                      </label>
-                      <input
+                      <Label variant="muted">Correct Answer</Label>
+                      <Input
                         type="number"
                         {...register("correct_marks")}
-                        className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-slate-500">
-                        No of Questions
-                      </label>
-                      <input
+                      <Label variant="muted">No of Questions</Label>
+                      <Input
                         type="number"
                         {...register("total_questions", {
                           required: "Required",
                           min: { value: 1, message: "At least 1" },
                         })}
                         placeholder="Ex.250 Marks"
-                        className={cn(
-                          "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                          errors.total_questions
-                            ? "border-red-400"
-                            : "border-slate-300",
-                        )}
+                        error={!!errors.total_questions}
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-slate-500">
-                        Total Marks
-                      </label>
-                      <input
+                      <Label variant="muted">Total Marks</Label>
+                      <Input
                         type="number"
                         {...register("total_marks", {
                           required: "Required",
                           min: { value: 1, message: "At least 1" },
                         })}
                         placeholder="Ex.250 Marks"
-                        className={cn(
-                          "w-full h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1b5def]/30 focus:border-[#1b5def]",
-                          errors.total_marks
-                            ? "border-red-400"
-                            : "border-slate-300",
-                        )}
+                        error={!!errors.total_marks}
                       />
                     </div>
                   </div>
@@ -604,21 +560,21 @@ export function EditTestModal({
               </div>
 
               <div className="flex items-center justify-end gap-4 border-t border-slate-100 bg-white px-8 py-5 shrink-0">
-                <button
+                <Button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-[#1b5def] hover:bg-[#ebf2ff]"
+                  className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] h-auto border-none shadow-none cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-10 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="flex items-center gap-2 rounded-lg bg-primary hover:bg-primary/90 px-10 py-2.5 text-sm font-bold text-white shadow-sm disabled:opacity-60 border-none h-auto cursor-pointer"
                 >
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                   Save
-                </button>
+                </Button>
               </div>
             </form>
           </>

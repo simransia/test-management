@@ -9,8 +9,9 @@ import { useTests, useDeleteTest } from "@/hooks/use-tests";
 
 export default function DashboardPage() {
   const { tests, isLoading, error, removeTestFromState } = useTests();
-  const { isDeleting, deleteError, performDelete, setDeleteError } = useDeleteTest();
-  
+  const { isDeleting, deleteError, performDelete, setDeleteError } =
+    useDeleteTest();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [testToDelete, setTestToDelete] = useState<Test | null>(null);

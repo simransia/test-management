@@ -49,7 +49,7 @@ export function TestSummaryBanner({
             type="button"
             onClick={onPublishClick}
             disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-[#1b5def] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-60 cursor-pointer"
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Publish

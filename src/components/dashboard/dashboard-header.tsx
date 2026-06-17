@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Search, LayoutGrid, List } from "lucide-react";
+import { Input } from "@/components/ui";
 
 interface DashboardHeaderProps {
   searchQuery: string;
@@ -22,12 +23,13 @@ export function DashboardHeader({
         {/* Search bar */}
         <div className="relative flex h-10 w-[280px] items-center rounded-lg border border-slate-200 bg-white px-3 shadow-xs">
           <Search className="size-4 shrink-0 text-slate-400" strokeWidth={2} />
-          <input
+          <Input
             type="text"
+            variant="unstyled"
             placeholder="Search tests..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="ml-2.5 h-full w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+            className="ml-2.5"
           />
         </div>
 
@@ -37,7 +39,7 @@ export function DashboardHeader({
             type="button"
             onClick={() => onViewModeChange("grid")}
             className={`flex size-8 items-center justify-center rounded-md transition-colors ${
-              viewMode === "grid" ? "bg-[#f4f8ff] text-[#1b5def]" : "text-slate-400"
+              viewMode === "grid" ? "bg-[#f4f8ff] text-primary" : "text-slate-400"
             }`}
             aria-label="Grid view"
           >
@@ -47,7 +49,7 @@ export function DashboardHeader({
             type="button"
             onClick={() => onViewModeChange("list")}
             className={`flex size-8 items-center justify-center rounded-md transition-colors ${
-              viewMode === "list" ? "bg-[#f4f8ff] text-[#1b5def]" : "text-slate-400"
+              viewMode === "list" ? "bg-[#f4f8ff] text-primary" : "text-slate-400"
             }`}
             aria-label="List view"
           >
