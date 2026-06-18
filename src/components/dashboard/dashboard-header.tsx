@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { Search, LayoutGrid, List } from "lucide-react";
 import { Input } from "@/components/ui";
+import { Breadcrumbs } from "@/components/layout";
 
 interface DashboardHeaderProps {
   searchQuery: string;
@@ -16,8 +17,8 @@ export function DashboardHeader({
   onViewModeChange,
 }: DashboardHeaderProps) {
   return (
-    <div className="flex h-[72px] shrink-0 items-center justify-between px-8 bg-white border-b border-slate-100">
-      <p className="text-base font-bold text-slate-800">Tests List</p>
+    <div className="flex shrink-0 py-5 items-center justify-between px-8 bg-white border-b border-slate-100">
+      <Breadcrumbs items={["Dashboard", "Test List"]} />
 
       <div className="flex items-center gap-4">
         {/* Search bar */}
@@ -39,7 +40,9 @@ export function DashboardHeader({
             type="button"
             onClick={() => onViewModeChange("grid")}
             className={`flex size-8 items-center justify-center rounded-md transition-colors ${
-              viewMode === "grid" ? "bg-[#f4f8ff] text-primary" : "text-slate-400"
+              viewMode === "grid"
+                ? "bg-[#f4f8ff] text-primary"
+                : "text-slate-400"
             }`}
             aria-label="Grid view"
           >
@@ -49,7 +52,9 @@ export function DashboardHeader({
             type="button"
             onClick={() => onViewModeChange("list")}
             className={`flex size-8 items-center justify-center rounded-md transition-colors ${
-              viewMode === "list" ? "bg-[#f4f8ff] text-primary" : "text-slate-400"
+              viewMode === "list"
+                ? "bg-[#f4f8ff] text-primary"
+                : "text-slate-400"
             }`}
             aria-label="List view"
           >
@@ -59,7 +64,7 @@ export function DashboardHeader({
 
         {/* Add New Button */}
         <Link
-          to="/tests/create"
+          to="/creation/create"
           className="flex h-10 items-center justify-center rounded-lg bg-[#5988ef] px-5 text-sm font-semibold text-white shadow-xs transition-opacity hover:opacity-95"
         >
           Add new

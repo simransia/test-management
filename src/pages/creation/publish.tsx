@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useTestStore } from "@/stores/test-store";
-import {
-  fetchTestById,
-  fetchBulkQuestions,
-  updateTest,
-} from "@/api/test";
+import { fetchTestById, fetchBulkQuestions, updateTest } from "@/api/test";
 import { getApiErrorMessage } from "@/lib/api";
 import type { Question } from "@/types/test";
 import {
@@ -17,8 +13,12 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatTestType, formatDifficulty, getDifficultyStyles } from "@/lib/test-utils";
-import { EditTestModal } from "@/components/tests/edit-test-modal";
+import {
+  formatTestType,
+  formatDifficulty,
+  getDifficultyStyles,
+} from "@/lib/test-utils";
+import { EditTestModal } from "@/components/creation/edit-test-modal";
 import { fetchSubjects, fetchTopicsBySubject } from "@/api/test";
 import type { Subject, Topic } from "@/types/test";
 
@@ -26,6 +26,7 @@ import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
 import { useSubjects, useTopics } from "@/hooks/use-test-metadata";
 import { Input, Label, Radio, Button } from "@/components/ui";
+import { Breadcrumbs } from "@/components/layout";
 
 export default function PublishPage() {
   const navigate = useNavigate();
@@ -59,13 +60,18 @@ export default function PublishPage() {
   // If no testId at all, redirect
   useEffect(() => {
     if (!testId) {
-      navigate("/tests/create");
+      navigate("/creation/create");
     }
   }, [testId, navigate]);
 
   // Fetch test if not in store
-  const { testData: fetchedTest, isLoading: testLoading, error: testError, reloadTest } = useTest(!testData ? testId : null);
-  
+  const {
+    testData: fetchedTest,
+    isLoading: testLoading,
+    error: testError,
+    reloadTest,
+  } = useTest(!testData ? testId : null);
+
   useEffect(() => {
     if (fetchedTest && !testData) {
       setTestData(fetchedTest);
@@ -75,7 +81,7 @@ export default function PublishPage() {
 
   // Fetch bulk questions if they exist in the fetched test
   const { questions, isLoading: questionsLoading } = useQuestions(
-    (!testData && fetchedTest?.questions) ? fetchedTest.questions : null
+    !testData && fetchedTest?.questions ? fetchedTest.questions : null,
   );
 
   useEffect(() => {
@@ -93,7 +99,7 @@ export default function PublishPage() {
   const subjectObj = subjects.find(
     (s) => s.name === testData?.subject || s.id === testData?.subject,
   );
-  
+
   const { topics, isLoading: topicsLoading } = useTopics(subjectObj?.id);
 
   const loading = testLoading || subjectsLoading;
@@ -150,19 +156,21 @@ export default function PublishPage() {
         <h2 className="text-2xl font-bold text-slate-800">
           Test Published Successfully!
         </h2>
-        <p className="text-sm text-slate-500">
-          Redirecting to dashboard...
-        </p>
+        <p className="text-sm text-slate-500">Redirecting to dashboard...</p>
       </div>
     );
   }
 
   return (
     <div className="flex h-full">
-
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-8 py-6">
+          <Breadcrumbs
+            items={["Test Creation", "Create Test", "Publish"]}
+            className="mb-6"
+          />
+
           <h1 className="text-lg font-bold text-slate-800 mb-6">
             Test creation
           </h1>
@@ -199,7 +207,11 @@ export default function PublishPage() {
                   onClick={() => setIsEditModalOpen(true)}
                   className="p-1.5 rounded-md hover:bg-slate-100 transition-colors border-none shadow-none h-auto w-auto min-w-0 cursor-pointer"
                 >
-                  <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
+                  <img
+                    src="/icons/edit.png"
+                    alt="Edit"
+                    className="h-4 w-4 object-contain"
+                  />
                 </Button>
               </div>
 
@@ -213,7 +225,11 @@ export default function PublishPage() {
                     getDifficultyStyles(testData.difficulty),
                   )}
                 >
-                  <img src="/icons/cognition.png" alt="Difficulty" className="h-3.5 w-3.5 object-contain" />
+                  <img
+                    src="/icons/cognition.png"
+                    alt="Difficulty"
+                    className="h-3.5 w-3.5 object-contain"
+                  />
                   {formatDifficulty(testData.difficulty)}
                 </span>
               </div>
@@ -264,7 +280,9 @@ export default function PublishPage() {
               </Button>
             </div>
 
-            <h3 className="text-sm font-bold text-slate-800 mb-2">Live Until</h3>
+            <h3 className="text-sm font-bold text-slate-800 mb-2">
+              Live Until
+            </h3>
             <p className="text-xs text-slate-500 mb-6">
               Choose how long this test should remain available on the platform.
             </p>
@@ -293,10 +311,7 @@ export default function PublishPage() {
 
             <div className="flex items-center gap-4 max-w-2xl">
               <div className="flex-1 relative">
-                <Input
-                  type="text"
-                  placeholder="Select End Date"
-                />
+                <Input type="text" placeholder="Select End Date" />
               </div>
               <div className="flex-1 relative">
                 <select className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-slate-400">
@@ -332,7 +347,11 @@ export default function PublishPage() {
                           getDifficultyStyles(q.difficulty),
                         )}
                       >
-                        <img src="/icons/cognition.png" alt="Difficulty" className="h-3 w-3 object-contain" />
+                        <img
+                          src="/icons/cognition.png"
+                          alt="Difficulty"
+                          className="h-3 w-3 object-contain"
+                        />
                         {formatDifficulty(q.difficulty)}
                       </span>
                     )}
@@ -385,7 +404,7 @@ export default function PublishPage() {
         <div className="flex items-center justify-end gap-4 border-t border-slate-200 bg-white px-8 py-4">
           <Button
             type="button"
-            onClick={() => navigate(`/tests/${testId}/questions`)}
+            onClick={() => navigate(`/creation/${testId}/questions`)}
             className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] h-auto border-none shadow-none cursor-pointer"
           >
             Cancel

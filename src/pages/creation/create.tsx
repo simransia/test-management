@@ -7,15 +7,15 @@ import { getApiErrorMessage } from "@/lib/api";
 import type { TestType, TestDifficulty } from "@/types/test";
 import { Loader2, AlertCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSubjects, useTopics, useSubTopics } from "@/hooks/use-test-metadata";
+import TestTypeTabs from "@/components/creation/test-type";
+import { Breadcrumbs } from "@/components/layout";
+import { formatTestType } from "@/lib/test-utils";
+import {
+  useSubjects,
+  useTopics,
+  useSubTopics,
+} from "@/hooks/use-test-metadata";
 import { Input, Label, Radio, Button } from "@/components/ui";
-
-/* ── Tab types ── */
-const TEST_TYPES: { label: string; value: TestType }[] = [
-  { label: "Chapter Wise", value: "chapterwise" },
-  { label: "PYQ", value: "pyq" },
-  { label: "Mock Test", value: "mock" },
-];
 
 interface FormValues {
   name: string;
@@ -70,7 +70,8 @@ export default function CreateTestPage() {
 
   const { subjects, isLoading: loadingSubjects } = useSubjects();
   const { topics, isLoading: loadingTopics } = useTopics(selectedSubject);
-  const { subTopics, isLoading: loadingSubTopics } = useSubTopics(selectedTopics);
+  const { subTopics, isLoading: loadingSubTopics } =
+    useSubTopics(selectedTopics);
 
   // Clear topics and sub_topics when subject changes
   useEffect(() => {
@@ -108,12 +109,14 @@ export default function CreateTestPage() {
         setTestData(res.data);
         setStep("questions");
         setSidebarCollapsed(true);
-        navigate(`/tests/${res.data.id}/questions`);
+        navigate(`/creation/${res.data.id}/questions`);
       } else {
         setError(res.message ?? "Failed to create test");
       }
     } catch (err) {
-      setError(getApiErrorMessage(err, "Failed to create test. Please try again."));
+      setError(
+        getApiErrorMessage(err, "Failed to create test. Please try again."),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -121,27 +124,15 @@ export default function CreateTestPage() {
 
   return (
     <div className="flex flex-col h-full bg-white">
+      <Breadcrumbs
+        items={["Test Creation", "Create Test", formatTestType(selectedType)]}
+        className="px-8 pt-6"
+      />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4">
           {/* Test Type Tabs */}
-          <div className="flex items-center gap-1 border border-slate-100 rounded-xl p-1 w-fit mb-8 bg-white shadow-sm">
-            {TEST_TYPES.map((tt) => (
-              <Button
-                key={tt.value}
-                type="button"
-                onClick={() => setValue("type", tt.value)}
-                className={cn(
-                  "px-6 py-2 text-sm font-semibold transition-colors rounded-lg border-none shadow-none h-auto cursor-pointer",
-                  selectedType === tt.value
-                    ? "bg-[#f4f8ff] text-primary hover:bg-[#f4f8ff]"
-                    : "bg-transparent text-slate-400 hover:text-slate-600 hover:bg-transparent",
-                )}
-              >
-                {tt.label}
-              </Button>
-            ))}
-          </div>
+          <TestTypeTabs />
 
           {error && (
             <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
@@ -197,7 +188,9 @@ export default function CreateTestPage() {
               <Controller
                 name="topics"
                 control={control}
-                rules={{ validate: (v) => v.length > 0 || "Select at least one topic" }}
+                rules={{
+                  validate: (v) => v.length > 0 || "Select at least one topic",
+                }}
                 render={({ field }) => (
                   <div className="relative">
                     <select
@@ -347,7 +340,9 @@ export default function CreateTestPage() {
                 error={!!errors.total_time}
               />
               {errors.total_time && (
-                <p className="text-xs text-red-500">{errors.total_time.message}</p>
+                <p className="text-xs text-red-500">
+                  {errors.total_time.message}
+                </p>
               )}
             </div>
 
@@ -357,12 +352,11 @@ export default function CreateTestPage() {
               <div className="flex items-center gap-6 h-11">
                 {(["easy", "medium", "hard"] as TestDifficulty[]).map((d) => (
                   <Label key={d} variant="inline">
-                    <Radio
-                      value={d}
-                      {...register("difficulty")}
-                    />
+                    <Radio value={d} {...register("difficulty")} />
                     <span className="text-sm text-slate-600 capitalize">
-                      {d === "hard" ? "Difficult" : d.charAt(0).toUpperCase() + d.slice(1)}
+                      {d === "hard"
+                        ? "Difficult"
+                        : d.charAt(0).toUpperCase() + d.slice(1)}
                     </span>
                   </Label>
                 ))}
@@ -372,33 +366,26 @@ export default function CreateTestPage() {
 
           {/* Marking Scheme */}
           <div className="mt-8">
-            <h3 className="text-sm font-semibold text-slate-700 mb-4">Marking Scheme:</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-4">
+              Marking Scheme:
+            </h3>
             <div className="grid grid-cols-5 gap-6">
               {/* Wrong Answer */}
               <div className="flex flex-col gap-1.5">
                 <Label variant="muted">Wrong Answer</Label>
-                <Input
-                  type="number"
-                  {...register("wrong_marks")}
-                />
+                <Input type="number" {...register("wrong_marks")} />
               </div>
 
               {/* Unattempted */}
               <div className="flex flex-col gap-1.5">
                 <Label variant="muted">Unattempted</Label>
-                <Input
-                  type="number"
-                  {...register("unattempt_marks")}
-                />
+                <Input type="number" {...register("unattempt_marks")} />
               </div>
 
               {/* Correct Answer */}
               <div className="flex flex-col gap-1.5">
                 <Label variant="muted">Correct Answer</Label>
-                <Input
-                  type="number"
-                  {...register("correct_marks")}
-                />
+                <Input type="number" {...register("correct_marks")} />
               </div>
 
               {/* No of Questions */}
@@ -437,14 +424,14 @@ export default function CreateTestPage() {
           <Button
             type="button"
             onClick={() => navigate("/")}
-            className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] border-none shadow-none h-auto cursor-pointer"
+            className="px-6 w-40 py-2.5 rounded-lg bg-[#f4f8ff] text-base font-medium text-primary-accent hover:bg-[#ebf2ff] border-none shadow-none h-auto cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={submitting}
-            className="flex items-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity disabled:opacity-60 border-none h-auto cursor-pointer"
+            className="flex w-40 items-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2.5 text-base font-medium text-white shadow-sm transition-opacity disabled:opacity-60 border-none h-auto cursor-pointer"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             Next

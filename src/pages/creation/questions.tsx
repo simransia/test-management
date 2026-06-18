@@ -31,12 +31,17 @@ import {
   formatDifficulty,
   getDifficultyStyles,
 } from "@/lib/test-utils";
-import { EditTestModal } from "@/components/tests/edit-test-modal";
-import { QuestionSidebar } from "@/components/tests/question-sidebar";
-import { TestSummaryBanner } from "@/components/tests/test-summary-banner";
-import { QuestionForm } from "@/components/tests/question-form";
+import { EditTestModal } from "@/components/creation/edit-test-modal";
+import { QuestionSidebar } from "@/components/creation/question-sidebar";
+import { TestSummaryBanner } from "@/components/creation/test-summary-banner";
+import { QuestionForm } from "@/components/creation/question-form";
+import { Breadcrumbs } from "@/components/layout";
 
-import { useSubjects, useTopics, useSubTopics } from "@/hooks/use-test-metadata";
+import {
+  useSubjects,
+  useTopics,
+  useSubTopics,
+} from "@/hooks/use-test-metadata";
 import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
 
@@ -77,13 +82,17 @@ export default function QuestionsPage() {
   // If no testId at all, redirect
   useEffect(() => {
     if (!testId) {
-      navigate("/tests/create");
+      navigate("/creation/create");
     }
   }, [testId, navigate]);
 
   // Fetch test if not in store
-  const { testData: fetchedTest, isLoading: testLoading, error: testError } = useTest(!testData ? testId : null);
-  
+  const {
+    testData: fetchedTest,
+    isLoading: testLoading,
+    error: testError,
+  } = useTest(!testData ? testId : null);
+
   useEffect(() => {
     if (fetchedTest && !testData) {
       setTestData(fetchedTest);
@@ -92,9 +101,10 @@ export default function QuestionsPage() {
   }, [fetchedTest, testData, setTestData, setTestId]);
 
   // Fetch bulk questions if they exist in the fetched test
-  const { questions: fetchedQuestions, isLoading: questionsLoading } = useQuestions(
-    (!testData && fetchedTest?.questions) ? fetchedTest.questions : null
-  );
+  const { questions: fetchedQuestions, isLoading: questionsLoading } =
+    useQuestions(
+      !testData && fetchedTest?.questions ? fetchedTest.questions : null,
+    );
 
   useEffect(() => {
     if (fetchedQuestions && fetchedQuestions.length > 0) {
@@ -121,7 +131,7 @@ export default function QuestionsPage() {
   const subjectObj = subjects.find(
     (s) => s.name === testData?.subject || s.id === testData?.subject,
   );
-  
+
   const { topics, isLoading: topicsLoading } = useTopics(subjectObj?.id);
 
   const topicIds = topics.map((t) => t.id);
@@ -211,7 +221,7 @@ export default function QuestionsPage() {
           setTestData(tRes.data);
         }
         setStep("publish");
-        navigate(`/tests/${testId}/publish`);
+        navigate(`/creation/${testId}/publish`);
       } else {
         setError(qRes.message ?? "Failed to save questions");
       }
@@ -240,6 +250,10 @@ export default function QuestionsPage() {
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-white">
         <div className="flex-1 overflow-y-auto">
+          <Breadcrumbs
+            items={["Test Creation", "Create Test", "Add Questions"]}
+            className="px-8 pt-6"
+          />
           {/* Test summary banner */}
           <TestSummaryBanner
             testData={testData}
@@ -279,7 +293,7 @@ export default function QuestionsPage() {
             type="button"
             onClick={() => {
               setSidebarCollapsed(false);
-              navigate("/tests/create");
+              navigate("/creation/create");
             }}
             className="rounded-lg bg-[#FF7F7F] px-5 py-2.5 text-sm text-white shadow-sm hover:bg-[#ff5252]"
           >

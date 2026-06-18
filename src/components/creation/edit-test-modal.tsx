@@ -15,16 +15,21 @@ import type {
   TestType,
   TestDifficulty,
 } from "@/types/test";
-import { Loader2, AlertCircle, ChevronDown, X } from "lucide-react";
+import { Loader2, AlertCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input, Label, Radio, Button } from "@/components/ui";
-
-const TEST_TYPES: { label: string; value: TestType }[] = [
-  { label: "Chapter Wise", value: "chapterwise" },
-  { label: "PYQ", value: "pyq" },
-  { label: "Mock Test", value: "mock" },
-];
+import TestTypeTabs from "./test-type";
+import {
+  Input,
+  Label,
+  Radio,
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
 
 interface FormValues {
   name: string;
@@ -203,8 +208,8 @@ export function EditTestModal({
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100 shrink-0">
-              <h2 className="text-base font-bold text-slate-600">
+            <div className="flex items-center justify-between px-8 py-5 shrink-0">
+              <h2 className="text-base font-medium text-black/60">
                 Edit Test creation
               </h2>
               <Button
@@ -219,24 +224,8 @@ export function EditTestModal({
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col flex-1 overflow-hidden"
             >
-              <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4">
-                <div className="flex items-center gap-1 border border-slate-100 rounded-xl p-1 w-fit mb-8 bg-white shadow-sm">
-                  {TEST_TYPES.map((tt) => (
-                    <Button
-                      key={tt.value}
-                      type="button"
-                      onClick={() => setValue("type", tt.value)}
-                      className={cn(
-                        "px-6 py-2 text-sm font-semibold transition-colors rounded-lg border-none shadow-none h-auto cursor-pointer",
-                        selectedType === tt.value
-                          ? "bg-[#f4f8ff] text-primary hover:bg-[#f4f8ff]"
-                          : "bg-transparent text-slate-400 hover:text-slate-600 hover:bg-transparent",
-                      )}
-                    >
-                      {tt.label}
-                    </Button>
-                  ))}
-                </div>
+              <div className="flex-1 overflow-y-auto px-5">
+                <TestTypeTabs />
 
                 {error && (
                   <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
@@ -249,28 +238,38 @@ export function EditTestModal({
                   {/* Subject */}
                   <div className="flex flex-col gap-1.5">
                     <Label variant="default">Subject</Label>
-                    <div className="relative">
-                      <select
-                        {...register("subject", {
-                          required: "Subject is required",
-                        })}
-                        disabled={subjects.length === 0}
-                        className={cn(
-                          "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
-                          errors.subject
-                            ? "border-red-400"
-                            : "border-slate-300",
-                        )}
-                      >
-                        <option value="">Choose from Drop-down</option>
-                        {subjects.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                    </div>
+                    <Controller
+                      name="subject"
+                      control={control}
+                      rules={{ required: "Subject is required" }}
+                      render={({ field }) => (
+                        <Select
+                          disabled={subjects.length === 0}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger
+                            className={cn(
+                              "w-full h-11 bg-white border-slate-300 hover:border-primary focus:border-primary px-4 text-left font-normal text-secondary transition-colors",
+                              errors.subject &&
+                                "border-red-400 focus:border-red-400 hover:border-red-400",
+                            )}
+                          >
+                            <SelectValue placeholder="Choose from Drop-down" />
+                          </SelectTrigger>
+                          <SelectContent
+                            position="popper"
+                            className="bg-white border border-slate-200"
+                          >
+                            {subjects.map((s) => (
+                              <SelectItem key={s.id} value={s.id}>
+                                {s.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
                     {errors.subject && (
                       <p className="text-xs text-red-500">
                         {errors.subject.message}
@@ -306,30 +305,36 @@ export function EditTestModal({
                           v.length > 0 || "Select at least one topic",
                       }}
                       render={({ field }) => (
-                        <div className="relative">
-                          <select
-                            disabled={loadingTopics || topics.length === 0}
-                            value=""
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (val && !field.value.includes(val)) {
-                                field.onChange([...field.value, val]);
-                              }
-                            }}
+                        <Select
+                          disabled={loadingTopics || topics.length === 0}
+                          value=""
+                          onValueChange={(val) => {
+                            if (val && !field.value.includes(val)) {
+                              field.onChange([...field.value, val]);
+                            }
+                          }}
+                        >
+                          <SelectTrigger
                             className={cn(
-                              "w-full h-11 rounded-lg border bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
-                              errors.topics
-                                ? "border-red-400"
-                                : "border-slate-300",
+                              "w-full h-11 bg-white border-slate-300 hover:border-primary focus:border-primary px-4 text-left font-normal text-secondary transition-colors",
+                              errors.topics &&
+                                "border-red-400 focus:border-red-400 hover:border-red-400",
                             )}
                           >
-                            <option value="">
-                              {loadingTopics
-                                ? "Loading..."
-                                : topics.length === 0
-                                  ? "Select subject first"
-                                  : "Choose from Drop-down"}
-                            </option>
+                            <SelectValue
+                              placeholder={
+                                loadingTopics
+                                  ? "Loading..."
+                                  : topics.length === 0
+                                    ? "Select subject first"
+                                    : "Choose from Drop-down"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent
+                            position="popper"
+                            className="bg-white border border-slate-200"
+                          >
                             {topics
                               .filter(
                                 (t) =>
@@ -337,13 +342,12 @@ export function EditTestModal({
                                   !field.value.includes(t.name),
                               )
                               .map((t) => (
-                                <option key={t.id} value={t.name}>
+                                <SelectItem key={t.id} value={t.name}>
                                   {t.name}
-                                </option>
+                                </SelectItem>
                               ))}
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                     {selectedTopics.length > 0 && (
@@ -389,27 +393,30 @@ export function EditTestModal({
                       name="sub_topics"
                       control={control}
                       render={({ field }) => (
-                        <div className="relative">
-                          <select
-                            disabled={
-                              loadingSubTopics || subTopics.length === 0
+                        <Select
+                          disabled={loadingSubTopics || subTopics.length === 0}
+                          value=""
+                          onValueChange={(val) => {
+                            if (val && !field.value.includes(val)) {
+                              field.onChange([...field.value, val]);
                             }
-                            value=""
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (val && !field.value.includes(val)) {
-                                field.onChange([...field.value, val]);
+                          }}
+                        >
+                          <SelectTrigger className="w-full h-11 bg-white border-slate-300 hover:border-primary focus:border-primary px-4 text-left font-normal text-secondary transition-colors">
+                            <SelectValue
+                              placeholder={
+                                loadingSubTopics
+                                  ? "Loading..."
+                                  : subTopics.length === 0
+                                    ? "Select topic first"
+                                    : "Choose from Drop-down"
                               }
-                            }}
-                            className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                            />
+                          </SelectTrigger>
+                          <SelectContent
+                            position="popper"
+                            className="bg-white border border-slate-200"
                           >
-                            <option value="">
-                              {loadingSubTopics
-                                ? "Loading..."
-                                : subTopics.length === 0
-                                  ? "Select topic first"
-                                  : "Choose from Drop-down"}
-                            </option>
                             {subTopics
                               .filter(
                                 (st) =>
@@ -417,13 +424,12 @@ export function EditTestModal({
                                   !field.value.includes(st.name),
                               )
                               .map((st) => (
-                                <option key={st.id} value={st.name}>
+                                <SelectItem key={st.id} value={st.name}>
                                   {st.name}
-                                </option>
+                                </SelectItem>
                               ))}
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                     {watch("sub_topics").length > 0 && (
@@ -484,14 +490,8 @@ export function EditTestModal({
                     <div className="flex items-center gap-6 h-11">
                       {(["easy", "medium", "hard"] as TestDifficulty[]).map(
                         (d) => (
-                          <Label
-                            key={d}
-                            variant="inline"
-                          >
-                            <Radio
-                              value={d}
-                              {...register("difficulty")}
-                            />
+                          <Label key={d} variant="inline">
+                            <Radio value={d} {...register("difficulty")} />
                             <span className="text-sm text-slate-600 capitalize">
                               {d === "hard"
                                 ? "Difficult"
@@ -512,24 +512,15 @@ export function EditTestModal({
                   <div className="grid grid-cols-5 gap-6">
                     <div className="flex flex-col gap-1.5">
                       <Label variant="muted">Wrong Answer</Label>
-                      <Input
-                        type="number"
-                        {...register("wrong_marks")}
-                      />
+                      <Input type="number" {...register("wrong_marks")} />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <Label variant="muted">Unattempted</Label>
-                      <Input
-                        type="number"
-                        {...register("unattempt_marks")}
-                      />
+                      <Input type="number" {...register("unattempt_marks")} />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <Label variant="muted">Correct Answer</Label>
-                      <Input
-                        type="number"
-                        {...register("correct_marks")}
-                      />
+                      <Input type="number" {...register("correct_marks")} />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <Label variant="muted">No of Questions</Label>
@@ -563,14 +554,14 @@ export function EditTestModal({
                 <Button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-sm font-bold text-primary hover:bg-[#ebf2ff] h-auto border-none shadow-none cursor-pointer"
+                  className="px-6 py-2.5 rounded-lg bg-[#f4f8ff] text-base font-medium text-primary-accent hover:bg-[#ebf2ff] h-auto border-none shadow-none cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 rounded-lg bg-primary hover:bg-primary/90 px-10 py-2.5 text-sm font-bold text-white shadow-sm disabled:opacity-60 border-none h-auto cursor-pointer"
+                  className="flex items-center gap-2 rounded-lg bg-primary hover:bg-primary/90 px-10 py-2.5 text-base font-medium text-white shadow-sm disabled:opacity-60 border-none h-auto cursor-pointer"
                 >
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                   Save

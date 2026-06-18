@@ -6,23 +6,31 @@ export interface InputProps extends React.ComponentProps<"input"> {
   error?: boolean;
 }
 
-function Input({ className, type = "text", variant = "default", error, ...props }: InputProps) {
-  const hasError = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
-  
+function Input({
+  className,
+  type = "text",
+  variant = "default",
+  error,
+  ...props
+}: InputProps) {
+  const hasError =
+    error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
+
   return (
     <input
       type={type}
       data-slot="input"
       className={cn(
-        // Base classes
         "w-full transition-colors outline-none",
-        // Variants according to figma specs
-        variant === "default" && cn(
-          "h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary",
-          hasError ? "border-red-400" : "border-slate-300"
-        ),
-        variant === "login" && "h-[50px] rounded-lg border border-[#60a5fa] bg-white px-4 text-base font-normal text-[#374151] placeholder-[#d1d5db] focus:border-[#5988ef] focus:outline-none focus:ring-1 focus:ring-[#5988ef]",
-        variant === "unstyled" && "bg-transparent w-full h-full text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none",
+        variant === "default" &&
+          cn(
+            "h-11 rounded-lg border bg-white px-4 text-sm focus:outline-none hover:border-primary focus:border-primary",
+            hasError ? "border-red-400" : "border-slate-300",
+          ),
+        variant === "login" &&
+          "h-[50px] rounded-lg border border-[#60a5fa] bg-white px-4 text-base font-normal text-secondary placeholder-[#d1d5db] focus:border-[#5988ef] focus:outline-none focus:ring-1 focus:ring-[#5988ef]",
+        variant === "unstyled" &&
+          "bg-transparent w-full h-full text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none",
         className,
       )}
       {...props}

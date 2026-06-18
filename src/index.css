@@ -10,7 +10,8 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-accent: var(--primary-accent);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -26,29 +27,20 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
-
-  /* Preproute Figma tokens */
-  --color-login-bg: #f7fbff;
-  --color-login-card-border: #60a5fa;
-  --color-login-text: #374151;
-  --color-login-placeholder: #d1d5db;
-  --color-login-border: #9ca3af;
-  --color-login-button: #5988ef;
-  --color-login-button-text: #fafafa;
 }
 
 :root {
   --radius: 0.5rem;
   --background: #f7fbff;
-  --foreground: #374151;
+  --primary: #7489ff;
+  --secondary: #374151;
+  --primary-accent: #384ec7;
+  --secondary-foreground: #f8faff;
   --card: #ffffff;
   --card-foreground: #374151;
   --popover: #ffffff;
   --popover-foreground: #374151;
-  --primary: #7489FF;
   --primary-foreground: #fafafa;
-  --secondary: #f7fbff;
-  --secondary-foreground: #374151;
   --muted: #f7fbff;
   --muted-foreground: #374151;
   --accent: #f7fbff;
@@ -56,7 +48,7 @@
   --destructive: #ef4444;
   --border: #9ca3af;
   --input: #9ca3af;
-  --ring: #7489FF;
+  --ring: #7489ff;
 }
 
 @layer base {

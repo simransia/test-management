@@ -41,23 +41,23 @@ export const router = createBrowserRouter([
             },
           },
           {
-            path: "tests/create",
+            path: "creation/create",
             lazy: async () => {
-              const module = await import("@/pages/tests/create");
+              const module = await import("@/pages/creation/create");
               return { Component: module.default };
             },
           },
           {
-            path: "tests/:testId/questions",
+            path: "creation/:testId/questions",
             lazy: async () => {
-              const module = await import("@/pages/tests/questions");
+              const module = await import("@/pages/creation/questions");
               return { Component: module.default };
             },
           },
           {
-            path: "tests/:testId/publish",
+            path: "creation/:testId/publish",
             lazy: async () => {
-              const module = await import("@/pages/tests/publish");
+              const module = await import("@/pages/creation/publish");
               return { Component: module.default };
             },
           },

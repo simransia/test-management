@@ -49,7 +49,7 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
     <article className="flex items-start justify-between gap-6 rounded-lg border border-[#e5e7eb] bg-white p-5">
       <div className="flex min-w-0 flex-1 flex-col gap-5">
         <div
-          className="inline-flex h-6 w-fit items-center rounded-xl px-2.5 text-sm text-[#f8faff]"
+          className="inline-flex h-6 w-fit items-center rounded-xl px-2.5 text-sm text-secondary-foreground"
           style={{
             backgroundImage:
               "linear-gradient(140.66deg, rgb(7, 1, 60) 0%, rgb(0, 10, 58) 102.39%)",
@@ -130,16 +130,9 @@ export function TestDetailCard({ test, onDelete }: TestDetailCardProps) {
 
       <div className="flex shrink-0 flex-col items-end justify-between self-stretch">
         <div className="flex items-center gap-3">
-          {/* <Link
-            to={`/tests/view/${test.id}`}
-            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
-            title="View test"
-          >
-            <img src="/icons/eye.png" alt="View" className="size-5 object-contain" />
-          </Link> */}
           <Link
-            to={`/tests/edit/${test.id}`}
-            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[#f8faff]"
+            to={`/creation/edit/${test.id}`}
+            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-secondary-foreground"
             title="Edit test"
           >
             <img

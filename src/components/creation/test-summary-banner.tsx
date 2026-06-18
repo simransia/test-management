@@ -8,8 +8,6 @@ interface TestSummaryBannerProps {
   getTopicName: (id: string) => string;
   getSubTopicName: (id: string) => string;
   onEditClick: () => void;
-  onPublishClick: () => void;
-  saving: boolean;
 }
 
 export function TestSummaryBanner({
@@ -18,8 +16,6 @@ export function TestSummaryBanner({
   getTopicName,
   getSubTopicName,
   onEditClick,
-  onPublishClick,
-  saving,
 }: TestSummaryBannerProps) {
   if (!testData) return null;
 
@@ -37,24 +33,13 @@ export function TestSummaryBanner({
           </span>
           <span className="text-sm text-slate-400">✓</span>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onEditClick}
-            className="p-1.5 rounded-md hover:bg-slate-100 transition-colors"
-          >
-            <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
-          </button>
-          <button
-            type="button"
-            onClick={onPublishClick}
-            disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-60 cursor-pointer"
-          >
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Publish
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onEditClick}
+          className="p-1.5 rounded-md hover:bg-slate-50 transition-colors text-primary-accent cursor-pointer"
+        >
+          <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
+        </button>
       </div>
 
       <div className="flex items-start justify-between">

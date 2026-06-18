@@ -30,7 +30,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="flex flex-col bg-[#f7fbff]">
+    <div className="flex flex-col">
       <DashboardHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -38,7 +38,7 @@ export default function DashboardPage() {
         onViewModeChange={setViewMode}
       />
 
-      <div className="p-8">
+      <div className="p-8 bg-white">
         {error && (
           <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
             <AlertCircle className="size-5 shrink-0" />

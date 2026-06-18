@@ -38,9 +38,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-login-bg">
+    <div className="flex h-screen w-screen overflow-hidden bg-background">
       {/* Left side — Illustration Panel (approx 47% width) */}
-      <div className="hidden h-full w-[47%] shrink-0 items-center justify-center lg:flex bg-login-bg">
+      <div className="hidden h-full w-[47%] shrink-0 items-center justify-center lg:flex bg-background">
         <img
           src="/login-illustration.svg"
           alt="Illustration"
@@ -63,7 +63,7 @@ export default function LoginPage() {
 
             {/* Heading Section */}
             <div className="mb-[30px] flex flex-col gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-[#374151]">
+              <h1 className="text-xl font-bold tracking-tight text-secondary">
                 Login
               </h1>
               <p className="text-[12px] font-normal text-gray-500">
@@ -89,10 +89,7 @@ export default function LoginPage() {
               <div className="flex flex-col gap-6">
                 {/* User ID Field */}
                 <div className="flex flex-col gap-2">
-                  <Label
-                    htmlFor="userId"
-                    variant="login"
-                  >
+                  <Label htmlFor="userId" variant="login">
                     User ID
                   </Label>
                   <Input
@@ -113,10 +110,7 @@ export default function LoginPage() {
 
                 {/* Password Field */}
                 <div className="flex flex-col gap-2">
-                  <Label
-                    htmlFor="password"
-                    variant="login"
-                  >
+                  <Label htmlFor="password" variant="login">
                     Password
                   </Label>
                   <Input

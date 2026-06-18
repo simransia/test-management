@@ -36,7 +36,7 @@ export function TopNav() {
       <div className="flex items-center gap-5">
         <button
           type="button"
-          className="flex size-12 items-center justify-center rounded-full border border-[#d1d5db] bg-white text-[#6b7180] transition-colors hover:bg-[#f8faff]"
+          className="flex size-12 items-center justify-center rounded-full border border-[#d1d5db] bg-white text-[#6b7180] transition-colors hover:bg-secondary-foreground"
           aria-label="Notifications"
         >
           <Bell className="size-5" strokeWidth={1.75} />
@@ -55,7 +55,9 @@ export function TopNav() {
               <span className="text-xl font-semibold leading-[1.5] text-[#374151]">
                 {displayName}
               </span>
-              <span className="text-xs leading-[1.5] text-[#374151]">{role}</span>
+              <span className="text-xs leading-[1.5] text-[#374151]">
+                {role}
+              </span>
             </div>
             <ChevronDown className="size-6 text-[#6b7180]" />
           </button>
@@ -68,7 +70,7 @@ export function TopNav() {
                   setMenuOpen(false);
                   logout();
                 }}
-                className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-[#374151] hover:bg-[#f8faff]"
+                className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-[#374151] hover:bg-secondary-foreground"
               >
                 <LogOut className="size-4" />
                 Log out
