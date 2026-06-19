@@ -9,7 +9,6 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronLeft,
-  ChevronDown,
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,7 +24,7 @@ import type { Subject, Topic } from "@/types/test";
 import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
 import { useSubjects, useTopics } from "@/hooks/use-test-metadata";
-import { Input, Label, Radio, Button } from "@/components/ui";
+import { Input, Label, Radio, Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui";
 import { Breadcrumbs } from "@/components/layout";
 
 export default function PublishPage() {
@@ -313,11 +312,15 @@ export default function PublishPage() {
               <div className="flex-1 relative">
                 <Input type="text" placeholder="Select End Date" />
               </div>
-              <div className="flex-1 relative">
-                <select className="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-slate-400">
-                  <option value="">Select End Time</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <div className="flex-1">
+                <Select>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select End Time" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="none">Select End Time</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

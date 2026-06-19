@@ -249,11 +249,22 @@ export default function QuestionsPage() {
 
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-white">
-        <div className="flex-1 overflow-y-auto">
+        <div className="px-8 pt-6 pb-2 flex items-center justify-between select-none">
           <Breadcrumbs
-            items={["Test Creation", "Create Test", "Add Questions"]}
-            className="px-8 pt-6"
+            items={["Test Creation", "Create Test", formatTestType(testData?.type)]}
           />
+          <button
+            type="button"
+            onClick={handleSaveAndContinue}
+            disabled={saving}
+            className="flex items-center justify-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2 text-sm font-semibold text-white shadow-sm disabled:opacity-60 cursor-pointer h-10 w-40 shrink-0"
+          >
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            Publish
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
           {/* Test summary banner */}
           <TestSummaryBanner
             testData={testData}

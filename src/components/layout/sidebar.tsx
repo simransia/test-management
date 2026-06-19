@@ -33,6 +33,7 @@ export function Sidebar() {
       path: "/creation/tracking",
       icon: TrackIcon,
       match: activePath.startsWith("/creation/tracking"),
+      disabled: true,
     },
   ];
 
@@ -69,18 +70,18 @@ export function Sidebar() {
             >
               {/* Active left border indicator */}
               {item.match && !sidebarCollapsed && (
-                <span className="absolute left-0 rotate-180 top-0 bottom-0 w-[12px] bg-primary-accent rounded-r-2xl" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 rotate-180 h-[calc(100%-2px)] bottom-0 w-[12px] bg-primary-accent rounded-r-[8px]" />
               )}
               <Link
-                to={item.path}
+                to={item.disabled ? "#" : item.path}
                 className={cn(
-                  "group relative flex items-center gap-3 text-sm font-bold transition-all overflow-hidden",
+                  "group relative flex items-center gap-3 text-base font-medium transition-all overflow-hidden",
                   sidebarCollapsed
                     ? "justify-center px-0 py-3 mx-2 rounded-lg"
-                    : "pl-2 pr-4 py-2.5 rounded-lg mx-1",
+                    : "pl-2 pr-4 py-2.5 rounded-l-md rounded-r-[8px] mx-1",
                   item.match
                     ? "bg-[#f4f8ff] text-primary-accent"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
+                    : "text-[#6B7180] hover:bg-slate-50 hover:text-slate-600",
                 )}
               >
                 <Icon

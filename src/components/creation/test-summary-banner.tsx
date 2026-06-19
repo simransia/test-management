@@ -8,6 +8,8 @@ interface TestSummaryBannerProps {
   getTopicName: (id: string) => string;
   getSubTopicName: (id: string) => string;
   onEditClick: () => void;
+  onPublishClick: () => void;
+  saving: boolean;
 }
 
 export function TestSummaryBanner({
@@ -16,27 +18,26 @@ export function TestSummaryBanner({
   getTopicName,
   getSubTopicName,
   onEditClick,
+  onPublishClick,
+  saving,
 }: TestSummaryBannerProps) {
   if (!testData) return null;
 
   return (
     <div className="bg-white border-b border-slate-100 px-8 py-5">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <span
-            className="inline-flex h-7 items-center rounded-full px-3 text-xs font-semibold text-white"
-            style={{
-              backgroundImage: "linear-gradient(140deg, #07013c 0%, #000a3a 100%)",
-            }}
-          >
-            {formatTestType(testData.type)}
-          </span>
-          <span className="text-sm text-slate-400">✓</span>
-        </div>
+        <span
+          className="inline-flex h-7 items-center rounded-full px-3 text-xs font-semibold text-white"
+          style={{
+            backgroundImage: "linear-gradient(140deg, #07013c 0%, #000a3a 100%)",
+          }}
+        >
+          {formatTestType(testData.type)}
+        </span>
         <button
           type="button"
           onClick={onEditClick}
-          className="p-1.5 rounded-md hover:bg-slate-50 transition-colors text-primary-accent cursor-pointer"
+          className="p-1 rounded-md hover:bg-slate-50 transition-colors"
         >
           <img src="/icons/edit.png" alt="Edit" className="h-4 w-4 object-contain" />
         </button>

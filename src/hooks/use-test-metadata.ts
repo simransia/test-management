@@ -62,30 +62,30 @@ export function useSubTopics(topicIds: string[] | undefined | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Deep comparison of topicIds would be better, but for simplicity, we serialize it
+  const serializedIds = topicIds?.join(",") ?? "";
+
   const loadSubTopics = useCallback(async () => {
-    if (!topicIds || topicIds.length === 0) {
+    const ids = serializedIds ? serializedIds.split(",") : [];
+    if (ids.length === 0) {
       setSubTopics([]);
       return;
     }
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetchSubTopicsByMultiTopics(topicIds);
+      const res = await fetchSubTopicsByMultiTopics(ids);
       setSubTopics(res.data ?? []);
     } catch (err) {
       setError(getApiErrorMessage(err, "Failed to load sub-topics."));
     } finally {
       setIsLoading(false);
     }
-  }, [topicIds]);
-
-  // Deep comparison of topicIds would be better, but for simplicity, we serialize it
-  const serializedIds = topicIds?.join(",") ?? "";
+  }, [serializedIds]);
   
   useEffect(() => {
     loadSubTopics();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serializedIds, loadSubTopics]);
+  }, [loadSubTopics]);
 
   return { subTopics, isLoading, error, reloadSubTopics: loadSubTopics };
 }

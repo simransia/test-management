@@ -1,6 +1,6 @@
 import type { TestDifficulty, TestType } from "@/types/test";
 
-export function formatTestType(type: TestType): string {
+export function formatTestType(type?: TestType): string {
   switch (type?.toLowerCase()) {
     case "chapterwise":
       return "Chapter Wise";
@@ -15,12 +15,12 @@ export function formatTestType(type: TestType): string {
   }
 }
 
-export function formatDifficulty(difficulty: TestDifficulty): string {
+export function formatDifficulty(difficulty?: TestDifficulty): string {
   if (!difficulty) return "Easy";
   return difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
 }
 
-export function getDifficultyStyles(difficulty: TestDifficulty): string {
+export function getDifficultyStyles(difficulty?: TestDifficulty): string {
   switch (difficulty?.toLowerCase()) {
     case "medium":
       return "bg-[#f59e0b]";

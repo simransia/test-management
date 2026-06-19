@@ -4,4 +4,6 @@ export { Label } from "./label";
 export { Textarea } from "./textarea";
 export { Radio, RadioGroup, RadioGroupItem } from "./radio";
 export * from "./select";
+export { Chip } from "./chip";
+
 

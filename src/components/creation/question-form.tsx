@@ -1,8 +1,18 @@
 import ReactQuill from "react-quill-new";
-import { ChevronDown } from "lucide-react";
 import type { LocalQuestion } from "@/stores/test-store";
 import type { Topic, SubTopic } from "@/types/test";
-import { Input, Label, Textarea, Radio, Button } from "@/components/ui";
+import {
+  Input,
+  Label,
+  Textarea,
+  Radio,
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
 
 interface QuestionFormProps {
   currentQuestion: LocalQuestion;
@@ -34,6 +44,31 @@ export function QuestionForm({
       ["image", "formula"],
     ],
   };
+
+  const settingsConfig = [
+    {
+      key: "difficulty" as const,
+      label: "Level of Difficulty",
+      value: currentQuestion.difficulty,
+      options: [
+        { value: "easy", label: "Easy" },
+        { value: "medium", label: "Medium" },
+        { value: "hard", label: "Hard" },
+      ],
+    },
+    {
+      key: "topic" as const,
+      label: "Topic",
+      value: currentQuestion.topic,
+      options: topics.map((t) => ({ value: t.name, label: t.name })),
+    },
+    {
+      key: "sub_topic" as const,
+      label: "Sub-topic",
+      value: currentQuestion.sub_topic,
+      options: subTopics.map((st) => ({ value: st.name, label: st.name })),
+    },
+  ];
 
   return (
     <div className="px-8 py-6">
@@ -98,7 +133,11 @@ export function QuestionForm({
           onClick={() => updateCurrent({ question: "" })}
           className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
         >
-          <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
+          <img
+            src="/icons/trash-grey.png"
+            alt="Clear"
+            className="h-4 w-4 object-contain"
+          />
         </Button>
       </div>
 
@@ -108,38 +147,46 @@ export function QuestionForm({
           Type the options below
         </h4>
         <div className="space-y-3">
-          {(["option1", "option2", "option3", "option4"] as const).map((key) => (
-            <Label key={key} variant="inline" className="gap-3 group">
-              <Radio
-                name={`correct-${currentQuestion.localId}`}
-                value={key}
-                checked={currentQuestion.correct_option === key}
-                onChange={() => updateCurrent({ correct_option: key })}
-              />
-              <div className="flex-1 relative flex items-center">
-                <Input
-                  type="text"
-                  value={currentQuestion[key]}
-                  onChange={(e) => updateCurrent({ [key]: e.target.value })}
-                  placeholder={`Type Option here`}
-                  className="pr-10"
+          {(["option1", "option2", "option3", "option4"] as const).map(
+            (key) => (
+              <Label key={key} variant="inline" className="gap-3 group">
+                <Radio
+                  name={`correct-${currentQuestion.localId}`}
+                  value={key}
+                  checked={currentQuestion.correct_option === key}
+                  onChange={() => updateCurrent({ correct_option: key })}
                 />
-                <Button
-                  type="button"
-                  onClick={() => updateCurrent({ [key]: "" })}
-                  className="absolute right-3 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
-                >
-                  <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
-                </Button>
-              </div>
-            </Label>
-          ))}
+                <div className="flex-1 relative flex items-center">
+                  <Input
+                    type="text"
+                    value={currentQuestion[key]}
+                    onChange={(e) => updateCurrent({ [key]: e.target.value })}
+                    placeholder={`Type Option here`}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => updateCurrent({ [key]: "" })}
+                    className="absolute right-3 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
+                  >
+                    <img
+                      src="/icons/trash-grey.png"
+                      alt="Clear"
+                      className="h-4 w-4 object-contain"
+                    />
+                  </Button>
+                </div>
+              </Label>
+            ),
+          )}
         </div>
       </div>
 
       {/* Add Solution */}
       <div className="mb-6">
-        <h4 className="text-sm font-semibold text-slate-700 mb-2">Add Solution</h4>
+        <h4 className="text-sm font-semibold text-slate-700 mb-2">
+          Add Solution
+        </h4>
         <div className="relative">
           <Textarea
             value={currentQuestion.explanation || ""}
@@ -152,72 +199,44 @@ export function QuestionForm({
             onClick={() => updateCurrent({ explanation: "" })}
             className="absolute top-4 right-4 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
           >
-            <img src="/icons/trash-grey.png" alt="Clear" className="h-4 w-4 object-contain" />
+            <img
+              src="/icons/trash-grey.png"
+              alt="Clear"
+              className="h-4 w-4 object-contain"
+            />
           </Button>
         </div>
       </div>
 
       {/* Question Settings */}
       <div className="border-t border-slate-100 pt-6">
-        <h4 className="text-sm font-semibold text-slate-700 mb-4">Question settings</h4>
+        <h4 className="text-sm font-semibold text-slate-700 mb-4">
+          Question settings
+        </h4>
         <div className="grid grid-cols-1 gap-4 max-w-lg">
-          {/* Difficulty */}
-          <div className="flex flex-col gap-1.5">
-            <Label variant="muted">Level of Difficulty</Label>
-            <div className="relative">
-              <select
-                value={currentQuestion.difficulty}
-                onChange={(e) => updateCurrent({ difficulty: e.target.value })}
-                className="w-full h-10 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+          {settingsConfig.map((field) => (
+            <div key={field.key} className="flex flex-col gap-1.5">
+              <Label variant="muted">{field.label}</Label>
+              <Select
+                value={field.value || "none"}
+                onValueChange={(val) =>
+                  updateCurrent({ [field.key]: val === "none" ? "" : val })
+                }
               >
-                <option value="">Select from Drop-down</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select from Drop-down" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="none">Select from Drop-down</SelectItem>
+                  {field.options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-
-          {/* Topic */}
-          <div className="flex flex-col gap-1.5">
-            <Label variant="muted">Topic</Label>
-            <div className="relative">
-              <select
-                value={currentQuestion.topic}
-                onChange={(e) => updateCurrent({ topic: e.target.value })}
-                className="w-full h-10 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30"
-              >
-                <option value="">Select from Drop-down</option>
-                {topics.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
-
-          {/* Sub-topic */}
-          <div className="flex flex-col gap-1.5">
-            <Label variant="muted">Sub-topic</Label>
-            <div className="relative">
-              <select
-                value={currentQuestion.sub_topic}
-                onChange={(e) => updateCurrent({ sub_topic: e.target.value })}
-                className="w-full h-10 rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30"
-              >
-                <option value="">Select from Drop-down</option>
-                {subTopics.map((st) => (
-                  <option key={st.id} value={st.name}>
-                    {st.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
+          ))}
 
           {/* Media URL */}
           <div className="flex flex-col gap-1.5">
