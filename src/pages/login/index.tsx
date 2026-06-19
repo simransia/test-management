@@ -50,7 +50,7 @@ export default function LoginPage() {
 
       {/* Right side — Outer wrapper with margin matching the Figma proto */}
       <div className="flex h-full flex-1 items-center justify-center p-5">
-        <div className="flex h-[calc(100vh-2.5rem)] w-full items-center rounded-[20px] border-[0.5px] border-[#60a5fa] bg-white px-8 sm:px-12 lg:px-[100px]">
+        <div className="flex h-[calc(100vh-2.5rem)] w-full items-center rounded-[8px] border-[0.5px] border-[#60a5fa] bg-white px-8 sm:px-12 lg:px-[100px]">
           <div className="w-full max-w-[510px] flex flex-col">
             {/* Logo */}
             <div className="mb-10">
