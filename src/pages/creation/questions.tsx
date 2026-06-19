@@ -303,6 +303,7 @@ export default function QuestionsPage() {
           {/* Current question form */}
           {currentQuestion && (
             <QuestionForm
+              key={currentQuestion.localId}
               currentQuestion={currentQuestion}
               activeQuestionIndex={activeQuestionIndex}
               totalQuestions={testData?.total_questions ?? localQuestions.length}

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BookOpen, Eye } from "lucide-react";
+import { BookOpen, Eye, Edit } from "lucide-react";
 import type { Test } from "@/types/test";
 import { formatTestType, formatDate } from "@/lib/test-utils";
 import { cn } from "@/lib/utils";
@@ -72,11 +72,7 @@ export function TestDetailCard({
             className="flex size-8 items-center cursor-pointer justify-center rounded-lg transition-colors hover:bg-secondary-foreground"
             title="Edit test"
           >
-            <img
-              src="/icons/edit.png"
-              alt="Edit"
-              className="size-5 object-contain"
-            />
+            <Edit className="size-5 text-[#D1D5DB]" />
           </button>
           <button
             type="button"

@@ -58,17 +58,16 @@ export function QuestionSidebar({
                 type="button"
                 onClick={() => setActiveQuestionIndex(idx)}
                 className={cn(
-                  "w-full flex items-center justify-between p-2 rounded-[8px] border text-xs transition-all shadow-sm",
-                  filled
-                    ? "border-green-500 bg-white text-green-600 font-medium"
-                    : "border-slate-200 bg-white text-slate-400 font-medium",
-                  activeQuestionIndex === idx &&
-                    !filled &&
-                    "border-primary text-primary",
+                  "w-full flex items-center justify-between p-2 rounded-[8px] border text-xs transition-all",
+                  activeQuestionIndex === idx
+                    ? "border-green-500 bg-[#f0fdf4] text-green-600 font-medium"
+                    : filled
+                      ? "border-green-500 bg-transparent text-green-600 font-medium"
+                      : "border-slate-200 bg-transparent text-slate-400 font-medium",
                 )}
               >
                 <div className="flex items-center gap-2">
-                  {filled ? (
+                  {filled || activeQuestionIndex === idx ? (
                     <img
                       src="/icons/green-check.png"
                       alt="Complete"
@@ -83,7 +82,7 @@ export function QuestionSidebar({
                   )}
                   <span>Question {idx + 1}</span>
                 </div>
-                {filled ? (
+                {activeQuestionIndex === idx || filled ? (
                   <img
                     src="/icons/green-double-arrow.png"
                     alt="Next"
