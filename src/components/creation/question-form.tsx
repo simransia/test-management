@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
+import { DeleteIcon } from "@/assets/delete-icon";
 
 interface QuestionFormProps {
   currentQuestion: LocalQuestion;
@@ -71,7 +72,7 @@ export function QuestionForm({
   ];
 
   return (
-    <div className="px-8 py-6">
+    <div className="px-5 py-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-slate-700">
           Question {activeQuestionIndex + 1}{" "}
@@ -80,22 +81,22 @@ export function QuestionForm({
         <div className="flex items-center gap-3 text-xs font-semibold">
           <Button
             type="button"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors h-auto min-w-0 shadow-none cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#FAFAFA] border-none text-[#9CA3AF] text-sm font-medium hover:text-slate-700 hover:bg-slate-50 transition-colors h-auto min-w-0 shadow-none cursor-pointer"
           >
             <img
               src="/icons/plus.png"
-              className="h-3 w-3 object-contain opacity-50"
+              className="h-5 w-5 object-contain opacity-50"
               alt="Add"
             />{" "}
             MCQ
           </Button>
           <Button
             type="button"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors h-auto min-w-0 shadow-none cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#FAFAFA] border-none text-[#9CA3AF] text-sm font-medium hover:text-slate-700 hover:bg-slate-50 transition-colors h-auto min-w-0 shadow-none cursor-pointer"
           >
             <img
               src="/icons/download.png"
-              className="h-3.5 w-3.5 object-contain opacity-50"
+              className="h-5 w-5 object-contain opacity-50"
               alt="Import"
             />{" "}
             CSV
@@ -107,13 +108,9 @@ export function QuestionForm({
         <Button
           type="button"
           onClick={onRemove}
-          className="text-xs font-semibold text-[#ff6b6b] hover:text-red-600 mb-4 flex items-center gap-1.5 bg-transparent border-none shadow-none p-0 h-auto cursor-pointer"
+          className="text-sm text-[#FF7F7F] hover:text-[#f46666] mb-4 flex items-center gap-1.5 bg-transparent border-none shadow-none p-0 h-auto cursor-pointer"
         >
-          <img
-            src="/icons/trash-grey.png"
-            alt="Delete All Edits"
-            className="h-3.5 w-3.5 object-contain"
-          />
+          <DeleteIcon color="#FF7F7F" />
           Delete All Edits
         </Button>
       )}
@@ -131,13 +128,9 @@ export function QuestionForm({
         <Button
           type="button"
           onClick={() => updateCurrent({ question: "" })}
-          className="absolute top-3 right-3 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
+          className="absolute top-3 right-3 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
         >
-          <img
-            src="/icons/trash-grey.png"
-            alt="Clear"
-            className="h-4 w-4 object-contain"
-          />
+          <DeleteIcon color="#D1D5DB" />
         </Button>
       </div>
 
@@ -167,13 +160,9 @@ export function QuestionForm({
                   <Button
                     type="button"
                     onClick={() => updateCurrent({ [key]: "" })}
-                    className="absolute right-3 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
+                    className="absolute right-3 p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
                   >
-                    <img
-                      src="/icons/trash-grey.png"
-                      alt="Clear"
-                      className="h-4 w-4 object-contain"
-                    />
+                    <DeleteIcon color="#D1D5DB" />
                   </Button>
                 </div>
               </Label>
@@ -197,13 +186,9 @@ export function QuestionForm({
           <Button
             type="button"
             onClick={() => updateCurrent({ explanation: "" })}
-            className="absolute top-4 right-4 opacity-50 hover:opacity-100 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
+            className="absolute top-4 right-4 transition-opacity p-0 h-auto w-auto min-w-0 bg-transparent border-none shadow-none cursor-pointer"
           >
-            <img
-              src="/icons/trash-grey.png"
-              alt="Clear"
-              className="h-4 w-4 object-contain"
-            />
+            <DeleteIcon color="#D1D5DB" />
           </Button>
         </div>
       </div>

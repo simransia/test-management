@@ -39,7 +39,7 @@ export function DashboardHeader({
           <button
             type="button"
             onClick={() => onViewModeChange("grid")}
-            className={`flex size-8 items-center justify-center rounded-md transition-colors ${
+            className={`flex size-8 cursor-pointer items-center justify-center rounded-md transition-colors ${
               viewMode === "grid"
                 ? "bg-[#f4f8ff] text-primary"
                 : "text-slate-400"
@@ -51,7 +51,7 @@ export function DashboardHeader({
           <button
             type="button"
             onClick={() => onViewModeChange("list")}
-            className={`flex size-8 items-center justify-center rounded-md transition-colors ${
+            className={`flex size-8 cursor-pointer items-center justify-center rounded-md transition-colors ${
               viewMode === "list"
                 ? "bg-[#f4f8ff] text-primary"
                 : "text-slate-400"
@@ -65,7 +65,7 @@ export function DashboardHeader({
         {/* Add New Button */}
         <Link
           to="/creation/create"
-          className="flex h-10 items-center justify-center rounded-lg bg-[#5988ef] px-5 text-sm font-semibold text-white shadow-xs transition-opacity hover:opacity-95"
+          className="flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-white transition-opacity hover:opacity-95"
         >
           Add new
         </Link>

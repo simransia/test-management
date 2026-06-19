@@ -78,6 +78,7 @@ export default function DashboardPage() {
                 key={test.id}
                 test={test}
                 onDelete={setTestToDelete}
+                viewMode={viewMode}
               />
             ))}
           </div>

@@ -30,11 +30,11 @@ export function QuestionSidebar({
       <div
         className={cn(
           "flex flex-col border-r border-slate-200 bg-white transition-all shrink-0",
-          questionPanelCollapsed ? "w-0 overflow-hidden" : "w-[260px]",
+          questionPanelCollapsed ? "w-0 overflow-hidden" : "w-[194px]",
         )}
       >
-        <div className="flex items-center justify-between px-6 py-5">
-          <span className="text-lg font-semibold text-slate-600">
+        <div className="flex items-center justify-between px-4 py-5">
+          <span className="text-sm font-medium text-[#6B7180]">
             Question creation
           </span>
           <button
@@ -50,11 +50,11 @@ export function QuestionSidebar({
           </button>
         </div>
 
-        <div className="px-6 py-2 pb-6 text-base font-medium text-slate-500">
+        <div className="px-4 py-2 pb-6 text-sm text-[#6B7180]">
           Total Questions . {localQuestions.length}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 space-y-3 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex-1 overflow-y-auto px-4 space-y-3 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {localQuestions.map((q, idx) => {
             const filled = isQuestionFilled(q);
             return (
@@ -63,25 +63,27 @@ export function QuestionSidebar({
                 type="button"
                 onClick={() => setActiveQuestionIndex(idx)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-2xl border text-sm transition-all shadow-sm",
+                  "w-full flex items-center justify-between p-2 rounded-[8px] border text-xs transition-all shadow-sm",
                   filled
                     ? "border-green-500 bg-white text-green-600 font-medium"
                     : "border-slate-200 bg-white text-slate-400 font-medium",
-                  activeQuestionIndex === idx && !filled && "border-primary text-primary",
+                  activeQuestionIndex === idx &&
+                    !filled &&
+                    "border-primary text-primary",
                 )}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {filled ? (
                     <img
                       src="/icons/green-check.png"
                       alt="Complete"
-                      className="h-5 w-5 object-contain"
+                      className="h-4 w-4 object-contain"
                     />
                   ) : (
                     <img
                       src="/icons/muted-check.png"
                       alt="Incomplete"
-                      className="h-5 w-5 object-contain"
+                      className="h-4 w-4 object-contain"
                     />
                   )}
                   <span>Question {idx + 1}</span>
@@ -126,7 +128,7 @@ export function QuestionSidebar({
           onClick={() => setQuestionPanelCollapsed(false)}
           className="flex items-center justify-center w-8 border-r border-slate-200 bg-white text-slate-400 hover:text-slate-600"
         >
-          <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
+          <ChevronDown className="h-4 w-4 -rotate-90" />
         </button>
       )}
     </>

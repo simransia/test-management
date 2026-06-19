@@ -249,15 +249,19 @@ export default function QuestionsPage() {
 
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-white">
-        <div className="px-8 pt-6 pb-2 flex items-center justify-between select-none">
+        <div className="px-8 pt-6 pb-2 flex items-center justify-between select-none border-b mb-5 border-b-[#E5E7EB]">
           <Breadcrumbs
-            items={["Test Creation", "Create Test", formatTestType(testData?.type)]}
+            items={[
+              "Test Creation",
+              "Create Test",
+              formatTestType(testData?.type),
+            ]}
           />
           <button
             type="button"
             onClick={handleSaveAndContinue}
             disabled={saving}
-            className="flex items-center justify-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2 text-sm font-semibold text-white shadow-sm disabled:opacity-60 cursor-pointer h-10 w-40 shrink-0"
+            className="flex items-center justify-center gap-2 rounded-lg bg-[#5988ef] hover:bg-[#5988ef]/90 px-8 py-2 text-base text-white shadow-sm disabled:opacity-60 cursor-pointer h-10 w-40 shrink-0"
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Publish
@@ -277,7 +281,7 @@ export default function QuestionsPage() {
           />
 
           {error && (
-            <div className="mx-8 mt-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <div className="mx-5 mt-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
               <AlertCircle className="size-5 shrink-0" />
               <span>{error}</span>
             </div>
@@ -306,7 +310,7 @@ export default function QuestionsPage() {
               setSidebarCollapsed(false);
               navigate("/creation/create");
             }}
-            className="rounded-lg bg-[#FF7F7F] px-5 py-2.5 text-sm text-white shadow-sm hover:bg-[#ff5252]"
+            className="rounded-lg bg-[#FF7F7F] px-5 py-2.5 text-base text-white shadow-sm hover:bg-[#ff5252]"
           >
             Exit Test Creation
           </button>
@@ -314,7 +318,7 @@ export default function QuestionsPage() {
             type="button"
             onClick={handleSaveAndContinue}
             disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-[#5988ef] px-10 py-2.5 text-sm text-white shadow-sm hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg text-base bg-[#5988ef] px-10 py-2.5 text-white shadow-sm hover:opacity-90 disabled:opacity-60"
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Next
