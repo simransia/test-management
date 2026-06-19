@@ -347,12 +347,15 @@ export default function PublishPage() {
                   className="rounded-lg border border-slate-200 bg-white p-4"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <p className="text-sm font-medium text-slate-700">
-                      <span className="text-primary font-bold">
-                        Q{idx + 1}.{" "}
+                    <div className="flex items-start gap-1.5 text-sm font-medium text-slate-700 max-w-[85%] overflow-hidden">
+                      <span className="text-primary font-bold shrink-0 mt-[1px]">
+                        Q{idx + 1}.
                       </span>
-                      {q.question}
-                    </p>
+                      <div
+                        className="[&>p]:m-0 break-words"
+                        dangerouslySetInnerHTML={{ __html: q.question }}
+                      />
+                    </div>
                     {q.difficulty && (
                       <span
                         className={cn(
