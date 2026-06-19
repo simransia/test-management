@@ -20,6 +20,7 @@ import {
 import { EditTestModal } from "@/components/creation/edit-test-modal";
 import { fetchSubjects, fetchTopicsBySubject } from "@/api/test";
 import type { Subject, Topic } from "@/types/test";
+import DOMPurify from "dompurify";
 
 import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
@@ -353,7 +354,9 @@ export default function PublishPage() {
                       </span>
                       <div
                         className="[&>p]:m-0 break-words"
-                        dangerouslySetInnerHTML={{ __html: q.question }}
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(q.question),
+                        }}
                       />
                     </div>
                     {q.difficulty && (
