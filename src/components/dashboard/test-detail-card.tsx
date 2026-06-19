@@ -1,21 +1,7 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router";
-import {
-  Clock,
-  HelpCircle,
-  BarChart3,
-  Pencil,
-  Eye,
-  Trash2,
-  BookOpen,
-} from "lucide-react";
+import { BookOpen, Eye } from "lucide-react";
 import type { Test } from "@/types/test";
-import {
-  formatTestType,
-  formatDifficulty,
-  getDifficultyStyles,
-  formatDate,
-} from "@/lib/test-utils";
+import { formatTestType, formatDate } from "@/lib/test-utils";
 import { cn } from "@/lib/utils";
 import Difficulty from "./difficulty";
 import TimerIcon from "@/assets/timer-icon";
@@ -25,6 +11,8 @@ import { DeleteIcon } from "@/assets/delete-icon";
 
 interface TestDetailCardProps {
   test: Test;
+  onView: (test: Test) => void;
+  onEdit: (test: Test) => void;
   onDelete: (test: Test) => void;
   viewMode: "list" | "grid";
 }
@@ -49,6 +37,8 @@ function InfoRow({ label, children }: { label: string; children: ReactNode }) {
 
 export function TestDetailCard({
   test,
+  onView,
+  onEdit,
   onDelete,
   viewMode,
 }: TestDetailCardProps) {
@@ -68,9 +58,18 @@ export function TestDetailCard({
           {formatTestType(test.type)}
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            to={`/creation/edit/${test.id}`}
-            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-secondary-foreground"
+          <button
+            type="button"
+            onClick={() => onView(test)}
+            className="flex size-8 items-center cursor-pointer justify-center rounded-lg transition-colors hover:bg-secondary-foreground"
+            title="View test"
+          >
+            <Eye className="size-5 text-[#D1D5DB]" strokeWidth={1.75} />
+          </button>
+          <button
+            type="button"
+            onClick={() => onEdit(test)}
+            className="flex size-8 items-center cursor-pointer justify-center rounded-lg transition-colors hover:bg-secondary-foreground"
             title="Edit test"
           >
             <img
@@ -78,11 +77,11 @@ export function TestDetailCard({
               alt="Edit"
               className="size-5 object-contain"
             />
-          </Link>
+          </button>
           <button
             type="button"
             onClick={() => onDelete(test)}
-            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-50"
+            className="flex size-8 items-center cursor-pointer justify-center rounded-lg transition-colors hover:bg-red-50"
             title="Delete test"
           >
             <DeleteIcon color="#D1D5DB" />

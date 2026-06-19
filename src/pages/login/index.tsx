@@ -62,8 +62,8 @@ export default function LoginPage() {
             </div>
 
             {/* Heading Section */}
-            <div className="mb-[30px] flex flex-col gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-secondary">
+            <div className="mb-[30px] flex flex-col gap-5">
+              <h1 className="text-[20px] font-semibold tracking-tight text-secondary">
                 Login
               </h1>
               <p className="text-[12px] font-normal text-gray-500">
@@ -94,10 +94,11 @@ export default function LoginPage() {
                   </Label>
                   <Input
                     id="userId"
-                    variant="login"
+                    // variant="login"
                     type="text"
                     placeholder="Enter User ID"
                     autoComplete="username"
+                    className="h-[48px]"
                     aria-invalid={Boolean(errors.userId)}
                     {...register("userId")}
                   />
@@ -115,8 +116,9 @@ export default function LoginPage() {
                   </Label>
                   <Input
                     id="password"
-                    variant="login"
+                    // variant="login"
                     type="password"
+                    className="h-[48px]"
                     placeholder="Enter Password"
                     autoComplete="current-password"
                     aria-invalid={Boolean(errors.password)}
@@ -133,7 +135,7 @@ export default function LoginPage() {
                 <Button
                   type="button"
                   variant="link"
-                  className="w-fit text-sm font-medium text-primary hover:underline self-start -mt-2 p-0 cursor-pointer"
+                  className="w-fit text-sm text-[#1B5DEF] hover:underline self-start -mt-2 p-0 cursor-pointer"
                 >
                   Forgot password?
                 </Button>
@@ -143,7 +145,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-8 flex h-[50px] w-full items-center justify-center rounded-lg bg-primary hover:bg-primary/90 text-base font-semibold text-[#fafafa] transition-opacity disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                className="mt-7.5 flex h-[50px] w-full items-center justify-center rounded-lg bg-[#5988EF] hover:bg-primary/90 text-base text-[#fafafa] transition-opacity disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
               >
                 {isSubmitting ? "Logging in..." : "Login"}
               </Button>

@@ -116,13 +116,13 @@ export function QuestionForm({
       )}
 
       {/* Question text */}
-      <div className="mb-6 relative">
+      <div className="mb-6 relative question-quill">
         <ReactQuill
           theme="snow"
           value={currentQuestion.question}
           onChange={(val) => updateCurrent({ question: val })}
           modules={quillModules}
-          className="bg-white rounded-lg mb-8 [&_.ql-toolbar]:rounded-t-lg [&_.ql-container]:rounded-b-lg [&_.ql-container]:min-h-[120px] [&_.ql-toolbar]:border-slate-200 [&_.ql-container]:border-slate-200"
+          className="bg-white rounded-lg mb-8 [&_.ql-toolbar]:rounded-t-lg [&_.ql-container]:rounded-b-lg [&_.ql-container]:min-h-[120px]"
           placeholder="Type here"
         />
         <Button

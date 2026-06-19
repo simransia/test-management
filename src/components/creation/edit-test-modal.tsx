@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { fetchTestById, updateTest, fetchSubjects } from "@/api/test";
 import { getApiErrorMessage } from "@/lib/api";
-import type { TestType, TestDifficulty } from "@/types/test";
 import { Loader2, AlertCircle, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui";

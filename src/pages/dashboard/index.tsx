@@ -1,20 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import type { Test } from "@/types/test";
 import { TestDetailCard } from "@/components/dashboard/test-detail-card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state";
 import { DashboardDeleteModal } from "@/components/dashboard/dashboard-delete-modal";
+import { EditTestModal } from "@/components/creation/edit-test-modal";
 import { AlertCircle } from "lucide-react";
 import { useTests, useDeleteTest } from "@/hooks/use-tests";
+import { useTestStore } from "@/stores/test-store";
 
 export default function DashboardPage() {
-  const { tests, isLoading, error, removeTestFromState } = useTests();
+  const navigate = useNavigate();
+  const resetTestStore = useTestStore((s) => s.reset);
+  const { tests, isLoading, error, removeTestFromState, reloadTests } =
+    useTests();
   const { isDeleting, deleteError, performDelete, setDeleteError } =
     useDeleteTest();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [testToDelete, setTestToDelete] = useState<Test | null>(null);
+  const [testToEdit, setTestToEdit] = useState<Test | null>(null);
+
+  const setSidebarCollapsed = useTestStore((s) => s.setSidebarCollapsed);
+
+  useEffect(() => {
+    setSidebarCollapsed(false);
+  }, []);
 
   const handleDeleteConfirm = async () => {
     if (!testToDelete) return;
@@ -77,6 +90,11 @@ export default function DashboardPage() {
               <TestDetailCard
                 key={test.id}
                 test={test}
+                onView={(t) => {
+                  resetTestStore();
+                  navigate(`/creation/${t.id}/publish`);
+                }}
+                onEdit={setTestToEdit}
                 onDelete={setTestToDelete}
                 viewMode={viewMode}
               />
@@ -95,6 +113,15 @@ export default function DashboardPage() {
             setDeleteError(null);
           }}
           onConfirm={handleDeleteConfirm}
+        />
+      )}
+
+      {testToEdit && (
+        <EditTestModal
+          testId={testToEdit.id}
+          isOpen={Boolean(testToEdit)}
+          onClose={() => setTestToEdit(null)}
+          onSuccess={reloadTests}
         />
       )}
     </div>

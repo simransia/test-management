@@ -6,6 +6,7 @@ import {
   useTestStore,
   type LocalQuestion,
   createEmptyQuestion,
+  isLocalQuestionFilled,
 } from "@/stores/test-store";
 import {
   fetchTestById,
@@ -59,7 +60,6 @@ export default function QuestionsPage() {
     localQuestions,
     activeQuestionIndex,
     setActiveQuestionIndex,
-    addLocalQuestion,
     updateLocalQuestion,
     removeLocalQuestion,
     setSavedQuestions,
@@ -112,18 +112,16 @@ export default function QuestionsPage() {
     }
   }, [fetchedQuestions, setSavedQuestions]);
 
-  // Initialize empty questions if testData is loaded and local questions are in initial state
+  // Sync question slots with total_questions from the test (survives page refresh)
   useEffect(() => {
-    if (testData && testData.total_questions > 1) {
-      if (localQuestions.length === 1 && localQuestions[0].question === "") {
-        const initialQs = [];
-        for (let i = 0; i < testData.total_questions; i++) {
-          initialQs.push(createEmptyQuestion());
-        }
-        setLocalQuestions(initialQs);
-      }
-    }
-  }, [testData, localQuestions, setLocalQuestions]);
+    const count = testData?.total_questions;
+    if (!testData?.id || !count || count < 1) return;
+
+    setLocalQuestions((prev) => {
+      if (prev.length === count) return prev;
+      return Array.from({ length: count }, (_, i) => prev[i] ?? createEmptyQuestion());
+    });
+  }, [testData?.id, testData?.total_questions, setLocalQuestions]);
 
   // Load subjects, topics, and subtopics using custom hooks
   const { subjects, isLoading: subjectsLoading } = useSubjects();
@@ -170,20 +168,35 @@ export default function QuestionsPage() {
     [currentQuestion, updateLocalQuestion],
   );
 
-  const isQuestionFilled = (q: LocalQuestion) =>
-    q.question.trim() !== "" &&
-    q.option1.trim() !== "" &&
-    q.option2.trim() !== "" &&
-    q.option3.trim() !== "" &&
-    q.option4.trim() !== "";
+  const handleNext = () => {
+    if (!currentQuestion) return;
 
-  const handleSaveAndContinue = async () => {
-    // Validate at least 1 question
-    const filledQuestions = localQuestions.filter(isQuestionFilled);
-    if (filledQuestions.length === 0) {
-      setError("Add at least 1 question with all options filled.");
+    if (!isLocalQuestionFilled(currentQuestion)) {
+      setError("Fill in the question and all four options before continuing.");
       return;
     }
+
+    setError(null);
+
+    if (activeQuestionIndex < localQuestions.length - 1) {
+      setActiveQuestionIndex(activeQuestionIndex + 1);
+      return;
+    }
+
+    handleSaveAndContinue();
+  };
+
+  const handleSaveAndContinue = async () => {
+    const unfilledIndex = localQuestions.findIndex((q) => !isLocalQuestionFilled(q));
+    if (unfilledIndex !== -1) {
+      setError(
+        `Please complete Question ${unfilledIndex + 1} before continuing.`,
+      );
+      setActiveQuestionIndex(unfilledIndex);
+      return;
+    }
+
+    const filledQuestions = localQuestions;
 
     setSaving(true);
     setError(null);
@@ -292,7 +305,7 @@ export default function QuestionsPage() {
             <QuestionForm
               currentQuestion={currentQuestion}
               activeQuestionIndex={activeQuestionIndex}
-              totalQuestions={localQuestions.length}
+              totalQuestions={testData?.total_questions ?? localQuestions.length}
               topics={topics}
               subTopics={subTopics}
               updateCurrent={updateCurrent}
@@ -316,7 +329,7 @@ export default function QuestionsPage() {
           </button>
           <button
             type="button"
-            onClick={handleSaveAndContinue}
+            onClick={handleNext}
             disabled={saving}
             className="flex items-center gap-2 rounded-lg text-base bg-[#5988ef] px-10 py-2.5 text-white shadow-sm hover:opacity-90 disabled:opacity-60"
           >

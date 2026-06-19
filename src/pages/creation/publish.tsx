@@ -24,7 +24,17 @@ import type { Subject, Topic } from "@/types/test";
 import { useTest } from "@/hooks/use-tests";
 import { useQuestions } from "@/hooks/use-questions";
 import { useSubjects, useTopics } from "@/hooks/use-test-metadata";
-import { Input, Label, Radio, Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui";
+import {
+  Input,
+  Label,
+  Radio,
+  Button,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui";
 import { Breadcrumbs } from "@/components/layout";
 
 export default function PublishPage() {
@@ -161,7 +171,7 @@ export default function PublishPage() {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-white">
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-8 py-6">

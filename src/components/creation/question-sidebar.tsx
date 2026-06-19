@@ -1,5 +1,5 @@
-import { useTestStore } from "@/stores/test-store";
-import { ChevronDown, Check } from "lucide-react";
+import { useTestStore, isLocalQuestionFilled } from "@/stores/test-store";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuestionSidebarProps {
@@ -15,15 +15,10 @@ export function QuestionSidebar({
     localQuestions,
     activeQuestionIndex,
     setActiveQuestionIndex,
-    addLocalQuestion,
+    testData,
   } = useTestStore();
 
-  const isQuestionFilled = (q: any) =>
-    q.question.trim() !== "" &&
-    q.option1.trim() !== "" &&
-    q.option2.trim() !== "" &&
-    q.option3.trim() !== "" &&
-    q.option4.trim() !== "";
+  const totalQuestions = testData?.total_questions ?? localQuestions.length;
 
   return (
     <>
@@ -51,12 +46,12 @@ export function QuestionSidebar({
         </div>
 
         <div className="px-4 py-2 pb-6 text-sm text-[#6B7180]">
-          Total Questions . {localQuestions.length}
+          Total Questions . {totalQuestions}
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 space-y-3 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {localQuestions.map((q, idx) => {
-            const filled = isQuestionFilled(q);
+            const filled = isLocalQuestionFilled(q);
             return (
               <button
                 key={q.localId}
@@ -104,21 +99,6 @@ export function QuestionSidebar({
               </button>
             );
           })}
-        </div>
-
-        <div className="p-4 border-t border-slate-100 mt-auto">
-          <button
-            type="button"
-            onClick={addLocalQuestion}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary py-2.5 text-sm font-semibold text-primary hover:bg-[#f4f8ff] cursor-pointer"
-          >
-            <img
-              src="/icons/plus.png"
-              className="h-4 w-4 object-contain"
-              alt="Add"
-            />
-            Add Question
-          </button>
         </div>
       </div>
 

@@ -1,10 +1,4 @@
-import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-  formatTestType,
-  formatDifficulty,
-  getDifficultyStyles,
-} from "@/lib/test-utils";
+import { formatTestType } from "@/lib/test-utils";
 import TimerIcon from "@/assets/timer-icon";
 import QuizIcon from "@/assets/quiz-icon";
 import LeaderboardIcon from "@/assets/leaderboard-icon";

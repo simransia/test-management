@@ -49,7 +49,11 @@ interface TestCreationState {
   updateLocalQuestion: (localId: string, data: Partial<LocalQuestion>) => void;
   removeLocalQuestion: (localId: string) => void;
   setSavedQuestions: (questions: Question[]) => void;
-  setLocalQuestions: (questions: LocalQuestion[]) => void;
+  setLocalQuestions: (
+    questions:
+      | LocalQuestion[]
+      | ((prev: LocalQuestion[]) => LocalQuestion[]),
+  ) => void;
 
   /* ── reset ── */
   reset: () => void;
@@ -75,6 +79,17 @@ export function createEmptyQuestion(): LocalQuestion {
     sub_topic: "",
     media_url: "",
   };
+}
+
+export function isLocalQuestionFilled(q: LocalQuestion): boolean {
+  const questionText = q.question.replace(/<[^>]*>/g, "").trim();
+  return (
+    questionText !== "" &&
+    q.option1.trim() !== "" &&
+    q.option2.trim() !== "" &&
+    q.option3.trim() !== "" &&
+    q.option4.trim() !== ""
+  );
 }
 
 const initialState = {
@@ -127,7 +142,13 @@ export const useTestStore = create<TestCreationState>((set) => ({
     }),
 
   setSavedQuestions: (questions) => set({ savedQuestions: questions }),
-  setLocalQuestions: (questions) => set({ localQuestions: questions }),
+  setLocalQuestions: (questions) =>
+    set((state) => ({
+      localQuestions:
+        typeof questions === "function"
+          ? questions(state.localQuestions)
+          : questions,
+    })),
 
   reset: () => {
     nextId = 1;
