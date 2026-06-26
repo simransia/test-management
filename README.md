@@ -21,26 +21,6 @@ pnpm dev
 
 App runs at [http://localhost:3000](http://localhost:3000).
 
-## Environment Variables
-
-| Variable | Description | Default |
-|---|---|---|
-| `VITE_API_URL` | Backend API base URL | Staging URL in `.env.example` |
-| `VITE_APP_TITLE` | Application title | `Preproute` |
-
-## API & Test Credentials
-
-- **API:** `https://admin-moderator-backend-staging.up.railway.app/api`
-- **User ID:** `vedant-admin`
-- **Password:** `vedant123`
-
-## Current Progress
-
-- [x] **Page 1 — Login** — JWT auth, form validation, protected routes
-- [ ] Page 2 — Dashboard / Test List
-- [ ] Page 3 — Create/Edit Test
-- [ ] Page 4 — Add Questions
-- [ ] Page 5 — Preview & Publish
 
 ## Scripts
 
